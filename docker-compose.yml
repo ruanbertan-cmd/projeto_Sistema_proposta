@@ -14,7 +14,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: Ruan-pause79
-      MYSQL_DATABASE: formulario-proposta
+      MYSQL_DATABASE: formulario
       MYSQL_USER: appuser
       MYSQL_PASSWORD: Ruan-pause79
     ports:

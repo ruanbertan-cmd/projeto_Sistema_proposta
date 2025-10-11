@@ -4,6 +4,7 @@ include_once('conexao.php');
 
 if (isset($_POST['botaoEnviar'])) {
     $volume = $_POST['volume'] ?? '';
+    $unidade_medida = $_POST['unidade_medida'] ?? '';
     $formato = $_POST['formato'] ?? '';
     $tipologia = $_POST['tipologia'] ?? '';
     $borda = $_POST['borda'] ?? '';
@@ -18,8 +19,8 @@ if (isset($_POST['botaoEnviar'])) {
     $embalagem = $_POST['embalagem'] ?? '';
     $observacao = $_POST['observacao'] ?? '';
 
-    $sql = "INSERT INTO propostas(volume,formato,tipologia,borda,cor,localUso,dataPrevisao,preco,cliente,obra,nomeProduto,marca,embalagem,observacao)
-    VALUES ('$volume','$formato','$tipologia','$borda','$cor','$localUso','$dataPrevisao','$preco','$cliente','$obra','$nomeProduto','$marca','$embalagem','$observacao')";
+    $sql = "INSERT INTO propostas(volume,unidade_medida,formato,tipologia,borda,cor,localUso,dataPrevisao,preco,cliente,obra,nomeProduto,marca,embalagem,observacao)
+    VALUES ('$volume','$unidade_medida','$formato','$tipologia','$borda','$cor','$localUso','$dataPrevisao','$preco','$cliente','$obra','$nomeProduto','$marca','$embalagem','$observacao')";
 
     if (mysqli_query($conexao, $sql)) {
         echo "<script>alert('Proposta enviada com sucesso!');</script>";
@@ -45,60 +46,65 @@ if (isset($_POST['botaoEnviar'])) {
             </div>
 
             <div class="entrada_formulario">
-                <label for="volume">Volume (pç ou m²):</label>
-                <input type="text" name="volume">
+                <label for="volume">Volume:</label>
+                <input type="text" name="volume" placeholder="Ex: 567.10 ou 1000.12">
+                <label for="unidade_medida">Unidade de medida</label>
+                <select name="unidade_medida">
+                    <option value="pc">pç</option>
+                    <option value="m2">m²</option>
+                </select>
             </div>
             <div class="entrada_formulario">
-                <label for="formato">Formato (cm):</label>
-                <input type="text" name="formato">
+                <label for="formato">Formato (cm)</label>
+                <input type="text" name="formato" placeholder="Ex: 10x60, 20x120, 60x60, etc">
             </div>
             <div class="entrada_formulario">
-                <label for="tipologia">Tipologia (Azulejo, Porcelanato e etc):</label>
-                <input type="text" name="tipologia">
+                <label for="tipologia">Tipologia</label>
+                <input type="text" name="tipologia" placeholder="Ex: Azulejo, Porcelanato, etc">
             </div>
             <div class="entrada_formulario">
-                <label for="borda">Bold ou retificado:</label>
-                <input type="text" name="borda">
+                <label for="borda">Bold ou retificado</label>
+                <input type="text" name="borda" placeholder="Ex: Bold ou Retificado">
             </div>
             <div class="entrada_formulario">
-                <label for="cor">Cor:</label>
-                <input type="text" name="cor">
+                <label for="cor">Cor</label>
+                <input type="text" name="cor" placeholder="Ex: Branco, Cinza, Bege, etc">
             </div>
             <div class="entrada_formulario">
-                <label for="localUso">Local de uso do produto (piso, parede, fachada, piscina, etc.):</label>
-                <input type="text" name="localUso">
+                <label for="localUso">Local de uso do produto</label>
+                <input type="text" name="localUso" placeholder="Ex: Piso, Parede, Fachada, Piscina, etc">
             </div>
             <div class="entrada_formulario">
-                <label for="dataPrevisao">Previsão entrega da obra/projeto:</label>
-                <input type="text" name="dataPrevisao">
+                <label for="dataPrevisao">Previsão entrega da obra/projeto</label>
+                <input type="text" name="dataPrevisao" placeholder="Ex: 01/10/2025">
             </div>
             <div class="entrada_formulario">
-                <label for="preco">Referência de preço (se houver):</label>
-                <input type="text" name="preco">
+                <label for="preco">Referência de preço (se houver)</label>
+                <input type="text" name="preco" placeholder="Ex: 99,90">
             </div>
             <div class="entrada_formulario">
-                <label for="cliente">Cliente:</label>
-                <input type="text" name="cliente">
+                <label for="cliente">Cliente</label>
+                <input type="text" name="cliente" placeholder="Ex: Ruan, Maria, João, etc">
             </div>
             <div class="entrada_formulario">
-                <label for="obra">Nome obra (se houver):</label>
-                <input type="text" name="obra">
+                <label for="obra">Nome obra (se houver)</label>
+                <input type="text" name="obra" placeholder="Ex: Edifício Tal, Casa Tal, etc">
             </div>
             <div class="entrada_formulario">
-                <label for="nomeProduto">Sugestão nome do produto (se houver):</label>
-                <input type="text" name="nomeProduto">
+                <label for="nomeProduto">Sugestão nome do produto (se houver)</label>
+                <input type="text" name="nomeProduto" placeholder="Ex: Marmore Carrara, Cimento Queimado, etc">
             </div>
             <div class="entrada_formulario">
-                <label for="marca">Marca sugerida* (Eliane/Decortiles/Elizabeth):</label>
-                <input type="text" name="marca">
+                <label for="marca">Marca sugerida</label>
+                <input type="text" name="marca" placeholder="Ex: Eliane, Decortiles, Elizabeth, etc">
             </div>
             <div class="entrada_formulario">
-                <label for="embalagem">Embalagem especial (sim ou não):</label>
-                <input type="text" name="embalagem">
+                <label for="embalagem">Embalagem especial</label>
+                <input type="text" name="embalagem" placeholder="Ex: Sim ou Não">
             </div>
             <div class="entrada_formulario">
-                <label for="observacao">Observações:</label>
-                <input type="text" name="observacao">
+                <label for="observacao">Observações</label>
+                <input type="text" name="observacao" placeholder="Ex: Observações adicionais">
             </div>
             <div class="botao_enviar">
                 <button type="submit" name="botaoEnviar">Enviar Solicitação!</button>

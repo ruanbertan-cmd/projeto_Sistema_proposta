@@ -28,7 +28,7 @@ label {
     margin-right: 3rem;
 }
 
-input {
+input,select {
     flex: 1; /* ocupa o restante da linha */
     padding: 0.3rem;
     box-sizing: border-box;

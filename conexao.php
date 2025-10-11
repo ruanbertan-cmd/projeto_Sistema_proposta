@@ -3,7 +3,7 @@
     $dbHost = 'db';
     $dbUsername = 'root';
     $dbPassword = 'Ruan-pause79';
-    $dbName = 'formulario-proposta';
+    $dbName = 'formulario';
 
     $conexao = new mysqli($dbHost, $dbUsername, $dbPassword, $dbName);
 
