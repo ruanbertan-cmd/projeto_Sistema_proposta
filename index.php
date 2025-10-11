@@ -28,8 +28,6 @@ if (isset($_POST['botaoEnviar'])) {
     }}
 ?>
 
-
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
