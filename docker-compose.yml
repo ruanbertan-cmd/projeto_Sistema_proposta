@@ -14,13 +14,10 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: Ruan-pause79
-      MYSQL_DATABASE: formulario
-      MYSQL_USER: appuser
-      MYSQL_PASSWORD: Ruan-pause79
+      MYSQL_DATABASE: site_propostas
     ports:
-      - "3307:3306"
+      - '3307:3306'
+    expose:
+      - '3307'
     volumes:
       - db_data:/var/lib/mysql
-
-volumes:
-  db_data:

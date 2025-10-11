@@ -19,7 +19,7 @@ if (isset($_POST['botaoEnviar'])) {
     $embalagem = $_POST['embalagem'] ?? '';
     $observacao = $_POST['observacao'] ?? '';
 
-    $sql = "INSERT INTO propostas(volume,unidade_medida,formato,tipologia,borda,cor,localUso,dataPrevisao,preco,cliente,obra,nomeProduto,marca,embalagem,observacao)
+    $sql = "INSERT INTO formulario(volume,unidade_medida,formato,tipologia,borda,cor,localUso,dataPrevisao,preco,cliente,obra,nomeProduto,marca,embalagem,observacao)
     VALUES ('$volume','$unidade_medida','$formato','$tipologia','$borda','$cor','$localUso','$dataPrevisao','$preco','$cliente','$obra','$nomeProduto','$marca','$embalagem','$observacao')";
 
     if (mysqli_query($conexao, $sql)) {
