@@ -26,7 +26,7 @@ $result = mysqli_query($conexao, $sql);
     </nav>
     </header>
 
-    <main>
+    <main class="main_proposta_fases">
     <h1>Fases Propostas</h1>
     <table>
         <tr>

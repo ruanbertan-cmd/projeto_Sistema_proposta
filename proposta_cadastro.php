@@ -48,7 +48,7 @@ if (isset($_POST['botaoEnviar'])) {
             </div>
         </nav>
         </header>
-        <main>
+        <main class="main_proposta_cadastro">
         <form action="proposta_cadastro.php" method="POST">
             <div>
                 <h1>Dados para Personalização de Produto (Proposta PR)</h1>
@@ -90,7 +90,7 @@ if (isset($_POST['botaoEnviar'])) {
             </div>
             <div class="entrada_formulario">
                 <label for="preco">Referência de preço (se houver)</label>
-                <input type="number" name="preco" placeholder="Ex: 99,90">
+                <input type="number" name="preco" placeholder="Ex: 99.90">
             </div>
             <div class="entrada_formulario">
                 <label for="cliente">Cliente</label>
