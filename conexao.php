@@ -1,8 +1,8 @@
 <?php
 
     $dbHost = 'db';
-    $dbUsername = 'root';
-    $dbPassword = 'Ruan-pause79';
+    $dbUsername = 'appuser';
+    $dbPassword = 'app123';
     $dbName = 'site_propostas';
 
     $conexao = new mysqli($dbHost, $dbUsername, $dbPassword, $dbName);

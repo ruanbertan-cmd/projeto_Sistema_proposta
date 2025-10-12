@@ -9,18 +9,18 @@ if (isset($_POST['botaoEnviar'])) {
     $tipologia = $_POST['tipologia'] ?? '';
     $borda = $_POST['borda'] ?? '';
     $cor = $_POST['cor'] ?? '';
-    $localUso = $_POST['localUso'] ?? '';
-    $dataPrevisao = $_POST['dataPrevisao'] ?? '';
+    $local_uso = $_POST['local_uso'] ?? '';
+    $data_previsao = $_POST['data_previsao'] ?? '';
     $preco = $_POST['preco'] ?? '';
     $cliente = $_POST['cliente'] ?? '';
     $obra = $_POST['obra'] ?? '';
-    $nomeProduto = $_POST['nomeProduto'] ?? '';
+    $nome_produto = $_POST['nome_produto'] ?? '';
     $marca = $_POST['marca'] ?? '';
     $embalagem = $_POST['embalagem'] ?? '';
     $observacao = $_POST['observacao'] ?? '';
 
-    $sql = "INSERT INTO formulario(volume,unidade_medida,formato,tipologia,borda,cor,localUso,dataPrevisao,preco,cliente,obra,nomeProduto,marca,embalagem,observacao)
-    VALUES ('$volume','$unidade_medida','$formato','$tipologia','$borda','$cor','$localUso','$dataPrevisao','$preco','$cliente','$obra','$nomeProduto','$marca','$embalagem','$observacao')";
+    $sql = "INSERT INTO formulario(volume,unidade_medida,formato,tipologia,borda,cor,local_uso,data_previsao,preco,cliente,obra,nome_produto,marca,embalagem,observacao)
+    VALUES ('$volume','$unidade_medida','$formato','$tipologia','$borda','$cor','$local_uso','$data_previsao','$preco','$cliente','$obra','$nome_produto','$marca','$embalagem','$observacao')";
 
     if (mysqli_query($conexao, $sql)) {
         echo "<script>alert('Proposta enviada com sucesso!');</script>";
@@ -47,11 +47,12 @@ if (isset($_POST['botaoEnviar'])) {
 
             <div class="entrada_formulario">
                 <label for="volume">Volume:</label>
-                <input type="text" name="volume" placeholder="Ex: 567.10 ou 1000.12">
+                <input type="text" name="volume" placeholder="Ex: 567.10 ou 1000.12" required>
                 <label for="unidade_medida">Unidade de medida</label>
-                <select name="unidade_medida">
-                    <option value="pc">pç</option>
-                    <option value="m2">m²</option>
+                <select name="unidade_medida" required>
+                    <option value="">Selecione...</option>
+                    <option value="pc">pc</option>
+                    <option value="m2">m2</option>
                 </select>
             </div>
             <div class="entrada_formulario">
@@ -71,12 +72,12 @@ if (isset($_POST['botaoEnviar'])) {
                 <input type="text" name="cor" placeholder="Ex: Branco, Cinza, Bege, etc">
             </div>
             <div class="entrada_formulario">
-                <label for="localUso">Local de uso do produto</label>
-                <input type="text" name="localUso" placeholder="Ex: Piso, Parede, Fachada, Piscina, etc">
+                <label for="local_uso">Local de uso do produto</label>
+                <input type="text" name="local_uso" placeholder="Ex: Piso, Parede, Fachada, Piscina, etc">
             </div>
             <div class="entrada_formulario">
-                <label for="dataPrevisao">Previsão entrega da obra/projeto</label>
-                <input type="text" name="dataPrevisao" placeholder="Ex: 01/10/2025">
+                <label for="data_previsao">Previsão entrega da obra/projeto</label>
+                <input type="date" name="data_previsao" placeholder="Ex: 01/10/2025" required>
             </div>
             <div class="entrada_formulario">
                 <label for="preco">Referência de preço (se houver)</label>
@@ -91,8 +92,8 @@ if (isset($_POST['botaoEnviar'])) {
                 <input type="text" name="obra" placeholder="Ex: Edifício Tal, Casa Tal, etc">
             </div>
             <div class="entrada_formulario">
-                <label for="nomeProduto">Sugestão nome do produto (se houver)</label>
-                <input type="text" name="nomeProduto" placeholder="Ex: Marmore Carrara, Cimento Queimado, etc">
+                <label for="nome_produto">Sugestão nome do produto (se houver)</label>
+                <input type="text" name="nome_produto" placeholder="Ex: Marmore Carrara, Cimento Queimado, etc">
             </div>
             <div class="entrada_formulario">
                 <label for="marca">Marca sugerida</label>
