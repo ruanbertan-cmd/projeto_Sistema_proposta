@@ -1,8 +1,8 @@
 <?php
 include_once('conexao.php');
 
-// Consulta todos os registros da tabela
-$sql = "SELECT * FROM formulario ORDER BY id DESC";
+// Consulta os registros da tabela detalhados abaixo:
+$sql = "SELECT volume,unidade_medida,formato,tipologia,borda,cor,local_uso,data_previsao,preco,nome_produto,marca,embalagem FROM formulario ORDER BY id DESC";
 $result = mysqli_query($conexao, $sql);
 
 ?>
@@ -28,9 +28,10 @@ $result = mysqli_query($conexao, $sql);
 
     <main class="main_proposta_fases">
     <h1>Fases Propostas</h1>
-    <table>
+ 
+    <table class="tabela_propostas">
+        
         <tr>
-            <th>ID</th>
             <th>Volume</th>
             <th>Unidade</th>
             <th>Formato</th>
@@ -40,12 +41,12 @@ $result = mysqli_query($conexao, $sql);
             <th>Local de Uso</th>
             <th>Data Previsão</th>
             <th>Preço</th>
-            <th>Cliente</th>
-            <th>Obra</th>
             <th>Nome Produto</th>
             <th>Marca</th>
             <th>Embalagem</th>
-            <th>Observação</th>
+            <th>Dados Completo</th>
+            <th>Status</th>
+
         </tr>
         <?php
         if(mysqli_num_rows($result) > 0){
@@ -60,6 +61,7 @@ $result = mysqli_query($conexao, $sql);
             echo "<tr><td colspan='16'>Nenhuma proposta encontrada.</td></tr>";
         }
         ?>
+
     </table>
     </main>
 </body>

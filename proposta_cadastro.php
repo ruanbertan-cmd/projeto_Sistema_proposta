@@ -97,7 +97,7 @@ if (isset($_POST['botaoEnviar'])) {
                 <input type="text" name="cliente" placeholder="Ex: Ruan, Maria, João, etc">
             </div>
             <div class="entrada_formulario">
-                <label for="obra">Nome obra (se houver)</label>
+                <label for="obra">Nome obra</label>
                 <input type="text" name="obra" placeholder="Ex: Edifício Tal, Casa Tal, etc">
             </div>
             <div class="entrada_formulario">
@@ -106,7 +106,7 @@ if (isset($_POST['botaoEnviar'])) {
             </div>
             <div class="entrada_formulario">
                 <label for="marca">Marca sugerida</label>
-                <input type="text" name="marca" placeholder="Ex: Eliane, Decortiles, Elizabeth, etc">
+                <input type="text" name="marca" placeholder="Ex: Eliane, Decortiles, Elizabeth, Eliane Floor, etc">
             </div>
             <div class="entrada_formulario">
                 <label for="embalagem">Embalagem especial</label>
