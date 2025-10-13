@@ -52,9 +52,32 @@ $result = mysqli_query($conexao, $sql);
         if(mysqli_num_rows($result) > 0){
             while($row = mysqli_fetch_assoc($result)){
                 echo "<tr>";
-                foreach($row as $col){
-                    echo "<td>".htmlspecialchars($col)."</td>";
+
+                foreach($row as $key => $col){
+                    echo "<td>" . htmlspecialchars($col) . "</td>";
                 }
+
+                $id = isset($row['id']) ? htmlspecialchars($row['id']) : null;
+
+                if (!in_array('', $row)) {
+                    echo "<td><a href='proposta_detalhes.php?id=" . $row['id'] . "'>Ver Detalhes</a></td>";
+                }
+                
+                $id = isset($row['id']) ? htmlspecialchars($row['id']) : null;
+
+                if ($id != null) {
+                    echo "<td><a href='aprovar_proposta.php?id=$id' 
+                        style='margin-right:5px; padding:5px 10px; background-color:#28a745; color:white; text-decoration:none; border-radius:4px;'
+                        onclick=\"return confirm('Tem certeza que deseja aprovar esta proposta?');\">
+                        Aprovar
+                    </a>";
+                    echo "<a href='rejeitar_proposta.php?id=$id' 
+                        style='padding:5px 10px; background-color:#dc3545; color:white; text-decoration:none; border-radius:4px;'
+                        onclick=\"return confirm('Tem certeza que deseja rejeitar esta proposta?');\">
+                        Rejeitar
+                    </a></td>";
+                }
+
                 echo "</tr>";
             }
         } else {
