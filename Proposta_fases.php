@@ -2,7 +2,7 @@
 include_once('conexao.php');
 
 // Consulta os registros da tabela detalhados abaixo:
-$sql = "SELECT volume,unidade_medida,formato,tipologia,borda,cor,local_uso,data_previsao,preco,nome_produto,marca,embalagem FROM formulario ORDER BY id DESC";
+$sql = "SELECT id,volume,unidade_medida,formato,tipologia,borda,cor,local_uso,data_previsao,preco,nome_produto,marca,embalagem FROM formulario ORDER BY id DESC";
 $result = mysqli_query($conexao, $sql);
 
 ?>
@@ -59,7 +59,7 @@ $result = mysqli_query($conexao, $sql);
 
                 $id = isset($row['id']) ? htmlspecialchars($row['id']) : null;
 
-                if (!in_array('', $row)) {
+                if (!in_array('id', $row)) {
                     echo "<td><a href='proposta_detalhes.php?id=" . $row['id'] . "'>Ver Detalhes</a></td>";
                 }
                 

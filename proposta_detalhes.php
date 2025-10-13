@@ -1,9 +1,25 @@
 <?php
 include_once('conexao.php');
 
-// Consulta os registros da tabela detalhados abaixo:
-$sql = "SELECT volume,unidade_medida,formato,tipologia,borda,cor,local_uso,data_previsao,preco,cliente,obra,nome_produto,marca,embalagem,observacao FROM formulario ORDER BY id";
+// Verifica se foi passado um ID na URL
+if (!isset($_GET['id'])) {
+    die("ID não informado.");
+}
+
+$id = intval($_GET['id']); // Sanitiza
+
+// Consulta apenas a linha com o ID informado
+$sql = "SELECT id, volume, unidade_medida, formato, tipologia, borda, cor, local_uso, data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, observacao 
+        FROM formulario 
+        WHERE id = $id";
+
 $result = mysqli_query($conexao, $sql);
+
+if (mysqli_num_rows($result) == 0) {
+    die("Nenhuma proposta encontrada para o ID informado.");
+}
+
+$row = mysqli_fetch_assoc($result);
 
 ?>
 <!DOCTYPE html>
@@ -29,38 +45,25 @@ $result = mysqli_query($conexao, $sql);
     <main class="main_proposta_fases">
     <h1>Consulta Completa dos Dados da Propostas</h1>
  
-    <table class="tabela_propostas">
-        
-        <tr>
-            <th>Volume</th>
-            <th>Unidade</th>
-            <th>Formato</th>
-            <th>Tipologia</th>
-            <th>Borda</th>
-            <th>Cor</th>
-            <th>Local de Uso</th>
-            <th>Data Previsão</th>
-            <th>Preço</th>
-            <th>Cliente</th>
-            <th>Obra</th>
-            <th>Nome Produto</th>
-            <th>Marca</th>
-            <th>Embalagem</th>
-            <th>Observação</th>
-        </tr>
-        <?php
-        if(mysqli_num_rows($result) > 0){
-            while($row = mysqli_fetch_assoc($result)){
-                echo "<tr>";
+    <table>
+        <tr><th>Volume</th><td><?php echo htmlspecialchars($row['volume']); ?></td></tr>
+        <tr><th>Unidade</th><td><?php echo htmlspecialchars($row['unidade_medida']); ?></td></tr>
+        <tr><th>Formato</th><td><?php echo htmlspecialchars($row['formato']); ?></td></tr>
+        <tr><th>Tipologia</th><td><?php echo htmlspecialchars($row['tipologia']); ?></td></tr>
+        <tr><th>Borda</th><td><?php echo htmlspecialchars($row['borda']); ?></td></tr>
+        <tr><th>Cor</th><td><?php echo htmlspecialchars($row['cor']); ?></td></tr>
+        <tr><th>Local de Uso</th><td><?php echo htmlspecialchars($row['local_uso']); ?></td></tr>
+        <tr><th>Data Previsão</th><td><?php echo htmlspecialchars($row['data_previsao']); ?></td></tr>
+        <tr><th>Preço</th><td><?php echo htmlspecialchars($row['preco']); ?></td></tr>
+        <tr><th>Cliente</th><td><?php echo htmlspecialchars($row['cliente']); ?></td></tr>
+        <tr><th>Obra</th><td><?php echo htmlspecialchars($row['obra']); ?></td></tr>
+        <tr><th>Nome Produto</th><td><?php echo htmlspecialchars($row['nome_produto']); ?></td></tr>
+        <tr><th>Marca</th><td><?php echo htmlspecialchars($row['marca']); ?></td></tr>
+        <tr><th>Embalagem</th><td><?php echo htmlspecialchars($row['embalagem']); ?></td></tr>
+        <tr><th>Observação</th><td><?php echo nl2br(htmlspecialchars($row['observacao'])); ?></td></tr>
+    </table>
 
-                foreach($row as $col){
-                    echo "<td>" . htmlspecialchars($col) . "</td>";
-                }}
-        } else {
-            echo "<tr><td colspan='16'>Nenhuma proposta encontrada.</td></tr>";
-        }
-        ?>
-
+    <a class="voltar" href="proposta_fases.php">← Voltar</a>
     </table>
     </main>
 </body>
