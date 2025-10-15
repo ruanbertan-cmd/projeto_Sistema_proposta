@@ -1,10 +1,13 @@
 <?php
+session_start();
 include 'conexao.php';
 
-$usuario = mysqli_real_escape_string($conexao, trim($_POST['username']));
-$senha = mysqli_real_escape_string($conexao, trim(md5($_POST['password'])));
+if($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = mysqli_real_escape_string($conexao, trim($_POST['username']));
+    $senha = mysqli_real_escape_string($conexao, trim(md5($_POST['password'])));
 
-$sql = "SELECT COUNT(*) AS total FROM  usuario WHERE usuario = '$usuario'";
+
+$sql = "SELECT COUNT(*) AS total FROM  usuario WHERE usuario = '$username'";
 $result = mysqli_query($conexao, $sql);
 $row = mysqli_fetch_assoc($result);
 
@@ -14,25 +17,17 @@ if($row['total'] == 1) {
     exit;
 }
 
-$sql = "INSERT INTO usuario (usuario, senha, data_cadastro) VALUES ('$usuario', '$senha', NOW())";
+$sql = "INSERT INTO usuario (usuario, senha, data_cadastro) VALUES ('$username', '$senha', NOW())";
 
 if($conexao -> query($sql) === TRUE) {
     $_SESSION['status_cadastro'] = true;
 }
 
 $conexao->close();
-
 header('Location: cadastro.php');
 exit;
-
+}
 ?>
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -42,8 +37,6 @@ exit;
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-
 
     <main class="main_cadastro">
         <form action="cadastro.php" method="POST">
@@ -60,10 +53,22 @@ exit;
                 <input type="password" name="password" placeholder="Senha" required>
             </div>
             <div>
-                <button type="submit" name="loginButton">Entrar</button>
+                <button type="submit" name="cadastroButton">Cadastrar</button>
 
             </div>
+            <?php
+                if(isset($_SESSION['usuario_existe'])):
+                    echo '<p class="alerta_erro">Usuário já existe. Escolha outro nome de usuário.</p>';
+                    unset($_SESSION['usuario_existe']);
 
-    
+                endif;
+                if(isset($_SESSION['status_cadastro'])):
+                    echo '<p class="alerta_sucesso">Cadastro efetuado com sucesso! Faça login para entrar.</p>';
+                    unset($_SESSION['status_cadastro']);
+                endif;
+            ?>
+        </form>
+        Ir para <a href="login.php">Login</a>
+    </main>
 </body>
 </html>
