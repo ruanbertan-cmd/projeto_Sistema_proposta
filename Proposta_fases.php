@@ -2,8 +2,8 @@
 include_once('conexao.php');
 
 // Consulta os registros da tabela detalhados abaixo:
-$sql = "SELECT id,volume,unidade_medida,formato,tipologia,borda,cor,local_uso,data_previsao,preco,nome_produto,marca,embalagem FROM formulario ORDER BY id DESC";
-$result = mysqli_query($conexao, $sql);
+$stmt = $conexao -> query("SELECT id,volume,unidade_medida,formato,tipologia,borda,cor,local_uso,data_previsao,preco,nome_produto,marca,embalagem,status FROM formulario ORDER BY id DESC");
+$result = $stmt -> FetchAll(PDO::FETCH_ASSOC);
 
 ?>
 <!DOCTYPE html>
@@ -33,58 +33,58 @@ $result = mysqli_query($conexao, $sql);
         
         <tr>
             <th>Volume</th>
-            <th>Unidade</th>
             <th>Formato</th>
             <th>Tipologia</th>
             <th>Borda</th>
-            <th>Cor</th>
             <th>Local de Uso</th>
             <th>Data Previsão</th>
-            <th>Preço</th>
-            <th>Nome Produto</th>
+            <th>Nome do produto</th>
             <th>Marca</th>
-            <th>Embalagem</th>
             <th>Dados Completo</th>
             <th>Status</th>
 
         </tr>
-        <?php
-        if(mysqli_num_rows($result) > 0){
-            while($row = mysqli_fetch_assoc($result)){
-                echo "<tr>";
+        <?php if (count($result) > 0): ?>
+            <?php foreach ($result as $row): ?>
+                <tr>
+                    <td><?= htmlspecialchars($row['volume']. ' ' . $row['unidade_medida']) ?></td>
+                    <td><?= htmlspecialchars($row['formato']) ?></td>
+                    <td><?= htmlspecialchars($row['tipologia']) ?></td>
+                    <td><?= htmlspecialchars($row['borda']) ?></td>
+                    <td><?= htmlspecialchars($row['local_uso']) ?></td>
+                    <td><?= htmlspecialchars(date('d/m/y', strtotime($row['data_previsao'])))?></td>
+                    <td><?= htmlspecialchars($row['nome_produto']) ?></td>
+                    <td><?= htmlspecialchars($row['marca']) ?></td>
+                    
 
-                foreach($row as $key => $col){
-                    echo "<td>" . htmlspecialchars($col) . "</td>";
-                }
+                    <!-- Link para ver detalhes completos -->
+                    <td><a href="proposta_detalhes.php?id=<?= $row['id'] ?>">Ver Detalhes</a></td>
 
-                $id = isset($row['id']) ? htmlspecialchars($row['id']) : null;
 
-                if (!in_array('id', $row)) {
-                    echo "<td><a href='proposta_detalhes.php?id=" . $row['id'] . "'>Ver Detalhes</a></td>";
-                }
-                
-                $id = isset($row['id']) ? htmlspecialchars($row['id']) : null;
 
-                if ($id != null) {
-                    echo "<td><a href='aprovar_proposta.php?id=$id' 
-                        style='margin-right:5px; padding:5px 10px; background-color:#28a745; color:white; text-decoration:none; border-radius:4px;'
-                        onclick=\"return confirm('Tem certeza que deseja aprovar esta proposta?');\">
-                        Aprovar
-                    </a>";
-                    echo "<a href='rejeitar_proposta.php?id=$id' 
-                        style='padding:5px 10px; background-color:#dc3545; color:white; text-decoration:none; border-radius:4px;'
-                        onclick=\"return confirm('Tem certeza que deseja rejeitar esta proposta?');\">
-                        Rejeitar
-                    </a></td>";
-                }
-
-                echo "</tr>";
-            }
-        } else {
-            echo "<tr><td colspan='16'>Nenhuma proposta encontrada.</td></tr>";
-        }
-        ?>
-
+                  <!-- Botões de Aprovar / Rejeitar -->
+                    
+                    <td style="color: <?= $row['status'] === 'Aprovado' ? 'green' : ($row['status'] === 'Rejeitado' ? 'red' : 'black') ?>;">
+                    <?php if($row['status'] === 'Em analise'): ?>
+                        <a href="aprovar_proposta.php?id=<?= htmlspecialchars($row['id']) ?>"
+                           style="margin-right:5px; padding:5px 10px; background-color:#28a745; color:white; text-decoration:none; border-radius:4px;"
+                           onclick="return confirm('Tem certeza que deseja aprovar esta proposta?');">
+                           Aprovar
+                        </a>
+                        <a href="rejeitar_proposta.php?id=<?= htmlspecialchars($row['id']) ?>"
+                           style="padding:5px 10px; background-color:#dc3545; color:white; text-decoration:none; border-radius:4px;"
+                           onclick="return confirm('Tem certeza que deseja rejeitar esta proposta?');">
+                           Rejeitar
+                        </a>
+                    <?php else: ?>
+                        <strong><?=htmlspecialchars($row['status']) ?></strong>
+                    <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr><td colspan="14">Nenhuma proposta encontrada.</td></tr>
+        <?php endif; ?>
     </table>
     </main>
 </body>

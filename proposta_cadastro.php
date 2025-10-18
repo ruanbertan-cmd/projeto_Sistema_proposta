@@ -22,11 +22,33 @@ if (isset($_POST['botaoEnviar'])) {
     $sql = "INSERT INTO formulario(volume,unidade_medida,formato,tipologia,borda,cor,local_uso,data_previsao,preco,cliente,obra,nome_produto,marca,embalagem,observacao)
     VALUES ('$volume','$unidade_medida','$formato','$tipologia','$borda','$cor','$local_uso','$data_previsao','$preco','$cliente','$obra','$nome_produto','$marca','$embalagem','$observacao')";
 
-    if (mysqli_query($conexao, $sql)) {
-        echo "<script>alert('Proposta enviada com sucesso!');</script>";
-    } else {
-        echo "Erro ao enviar proposta: " . mysqli_error($conexao);
-    }}
+    try {
+        $stmt = $conexao -> prepare($sql);
+        $stmt -> bindParam(':volume', $volume);
+        $stmt -> bindParam(':unidade_medida', $unidade_medida);
+        $stmt -> bindParam(':formato', $formato);
+        $stmt -> bindParam(':tipologia', $tipologia);
+        $stmt -> bindParam(':borda', $borda);
+        $stmt -> bindParam(':cor', $cor);
+        $stmt -> bindParam(':local_uso', $local_uso);
+        $stmt -> bindParam(':data_previsao', $data_previsao);
+        $stmt -> bindParam(':preco', $preco);
+        $stmt -> bindParam(':cliente', $cliente);
+        $stmt -> bindParam(':obra', $obra);
+        $stmt -> bindParam(':nome_produto', $nome_produto);
+        $stmt -> bindParam(':marca', $marca);
+        $stmt -> bindParam(':embalagem', $embalagem);
+        $stmt -> bindParam(':observacao', $observacao);
+
+        if ($stmt -> Execute()) {
+        echo "<script>alert('Proposta enviada com sucesso!'); window.location.href = 'proposta_cadastro.php';</script>";
+        } else {
+        echo "<script>alert('Erro ao enviar proposta. Tente novamente.'); window.location.href = 'proposta_cadastro.php';</script>";
+        }
+    } catch (PDOException $e) {
+        echo "Erro ao enviar proposta: " . $e->getMessage();
+    }
+}
 ?>
 
 <!DOCTYPE html>

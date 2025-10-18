@@ -1,17 +1,24 @@
 <?php
-
     $dbHost = 'db';
     $dbUsername = 'appuser';
     $dbPassword = 'app123';
     $dbName = 'site_propostas';
 
-    $conexao = new mysqli($dbHost, $dbUsername, $dbPassword, $dbName);
+    try {
+        // Monta a string de conexão (DSN)
+        $dsn = "mysql:host=$dbHost;dbname=$dbName;charset=utf8";
 
-    //if ($conexao->connect_error) {
-    //    die("Erro de conexão: " . $conexao->connect_error);
-    //} else {
-    //echo "Conectado com sucesso!";
-    //}
-    //$conexao->close();
+        // Cria a conexão PDO
+        $conexao = new PDO($dsn, $dbUsername, $dbPassword);
 
+        // Define o modo de erro para exceções
+        $conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        // Opcional: ativa o modo de fetch associativo por padrão
+        $conexao->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
+        // echo "Conectado com sucesso!";
+    } catch (PDOException $e) {
+        die("Erro de conexão: " . $e->getMessage());
+    }
 ?>
