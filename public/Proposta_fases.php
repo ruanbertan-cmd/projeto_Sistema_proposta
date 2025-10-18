@@ -1,5 +1,6 @@
 <?php
-include_once('conexao.php');
+session_start();
+include('../src/config/conexao.php');
 
 // Consulta os registros da tabela detalhados abaixo:
 $stmt = $conexao -> query("SELECT id,volume,unidade_medida,formato,tipologia,borda,cor,local_uso,data_previsao,preco,nome_produto,marca,embalagem,status FROM formulario ORDER BY id DESC");

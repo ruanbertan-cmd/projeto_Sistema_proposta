@@ -1,5 +1,6 @@
 <?php
-include_once('conexao.php');
+session_start();
+include('../src/config/conexao.php');
 
 // Verifica se o ID foi passado
 if(!isset($_GET['id'])) {

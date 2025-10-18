@@ -1,15 +1,22 @@
 version: '3.8'
 
 services:
+
+# Serviço PHP com Apache
   php:
     build: .
+    container_name: php_app
     ports:
       - "8080:80"
     volumes:
-      - .:/var/www/html
+      - ./public:/var/www/html
+      - ./src:/var/www/src
     depends_on:
       - db
+    networks:
+      - php_network
 
+# Serviço MySQL
   db:
     image: mysql:8.0
     container_name: db
@@ -23,6 +30,27 @@ services:
       - '3306:3306'
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - php_network
+
+# Container de administração do banco de dados (phpMyAdmin)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: Ruan-pause79
+    ports:
+      - '8081:80'
+    depends_on:
+      - db
+    networks:
+      - php_network
 
 volumes:
   db_data:
+
+networks:
+  php_network:
+    driver: bridge

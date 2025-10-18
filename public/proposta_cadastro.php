@@ -1,6 +1,6 @@
 <?php
-    
-include_once('conexao.php');
+session_start();
+include('../src/config/conexao.php');
 
 if (isset($_POST['botaoEnviar'])) {
     $volume = $_POST['volume'] ?? '';

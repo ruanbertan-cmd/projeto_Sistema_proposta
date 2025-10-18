@@ -1,21 +1,26 @@
 <?php
-include('conexao.php');
+session_start();
+include('../src/config/conexao.php');
 
-$usuario = mysqli_real_escape_string($conexao, $_POST['username']);
-$senha = mysqli_real_escape_string($conexao, $_POST['password']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$usuario = $_POST['username'];
+$senha = $_POST['password'];
 
-$query = "SELECT usuario_id, usuario * FROM usuario WHERE usuario = ('{$senha}') AND senha = md5('{$senha}')";
+$stmt = $conexao -> prepare("SELECT usuario_id, usuario FROM usuario WHERE usuario = :usuario AND senha = md5(:senha)");
 
-$result = mysqli_query($conexao, $query);
+$stmt = bindParam(':usuario', $usuario);
+$stmt = bindParam(':senha', $senha);
+$stmt -> execute();
 
-$row = mysqli_num_rows($result);
-
-if($row == 1) {
+if($stmt -> rowCount() === 1) {
+    $_SESSION['usuario'] = $usuario;
     header('location: proposta_cadastro.php');
     exit;
 } else {
+    $_SESSION['login_erro'] = true;
     header('Location: login.php');
     exit;
+}
 }
 ?>
 

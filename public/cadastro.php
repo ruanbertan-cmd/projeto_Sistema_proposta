@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'conexao.php';
+include('../src/config/conexao.php');
 
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = mysqli_real_escape_string($conexao, trim($_POST['username']));
