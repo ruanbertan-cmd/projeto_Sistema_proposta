@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('../src/config/conexao.php');
+include(__DIR__ . '/../src/config/conexao.php');
 
 // Verifica se foi passado um ID na URL
 if (!isset($_GET['id'])) {
@@ -52,7 +52,7 @@ $row = $result[0];
         <tr><th>Borda</th><td><?php echo htmlspecialchars($row['borda']); ?></td></tr>
         <tr><th>Cor</th><td><?php echo htmlspecialchars($row['cor']); ?></td></tr>
         <tr><th>Local de Uso</th><td><?php echo htmlspecialchars($row['local_uso']); ?></td></tr>
-        <tr><th>Data Previsão</th><td><?php echo htmlspecialchars(date('d/m/y', strtotime($row['data_previsao']))); ?></td></tr>
+        <tr><th>Data Previsão</th><td><?php echo htmlspecialchars(date('d/m/Y', strtotime($row['data_previsao']))); ?></td></tr>
         <tr><th>Preço</th><td><?php echo htmlspecialchars($row['preco']); ?></td></tr>
         <tr><th>Cliente</th><td><?php echo htmlspecialchars($row['cliente']); ?></td></tr>
         <tr><th>Obra</th><td><?php echo htmlspecialchars($row['obra']); ?></td></tr>

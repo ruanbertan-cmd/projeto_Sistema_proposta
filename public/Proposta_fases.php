@@ -1,10 +1,10 @@
 <?php
 session_start();
-include('../src/config/conexao.php');
+include(__DIR__ . '/../src/config/conexao.php');
 
 // Consulta os registros da tabela detalhados abaixo:
-$stmt = $conexao -> query("SELECT id,volume,unidade_medida,formato,tipologia,borda,cor,local_uso,data_previsao,preco,nome_produto,marca,embalagem,status FROM formulario ORDER BY id DESC");
-$result = $stmt -> FetchAll(PDO::FETCH_ASSOC);
+$stmt = $conexao -> query("SELECT id,volume,unidade_medida,formato,tipologia,borda,local_uso,data_previsao,nome_produto,marca,status FROM formulario ORDER BY id DESC");
+$result = $stmt -> fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 <!DOCTYPE html>
@@ -53,7 +53,7 @@ $result = $stmt -> FetchAll(PDO::FETCH_ASSOC);
                     <td><?= htmlspecialchars($row['tipologia']) ?></td>
                     <td><?= htmlspecialchars($row['borda']) ?></td>
                     <td><?= htmlspecialchars($row['local_uso']) ?></td>
-                    <td><?= htmlspecialchars(date('d/m/y', strtotime($row['data_previsao'])))?></td>
+                    <td><?= htmlspecialchars(date('d/m/Y', strtotime($row['data_previsao'])))?></td>
                     <td><?= htmlspecialchars($row['nome_produto']) ?></td>
                     <td><?= htmlspecialchars($row['marca']) ?></td>
                     

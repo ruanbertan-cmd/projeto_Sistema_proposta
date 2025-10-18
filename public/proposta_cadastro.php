@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('../src/config/conexao.php');
+include(__DIR__ . '/../src/config/conexao.php');
 
 if (isset($_POST['botaoEnviar'])) {
     $volume = $_POST['volume'] ?? '';
@@ -20,7 +20,7 @@ if (isset($_POST['botaoEnviar'])) {
     $observacao = $_POST['observacao'] ?? '';
 
     $sql = "INSERT INTO formulario(volume,unidade_medida,formato,tipologia,borda,cor,local_uso,data_previsao,preco,cliente,obra,nome_produto,marca,embalagem,observacao)
-    VALUES ('$volume','$unidade_medida','$formato','$tipologia','$borda','$cor','$local_uso','$data_previsao','$preco','$cliente','$obra','$nome_produto','$marca','$embalagem','$observacao')";
+    VALUES (:volume, :unidade_medida, :formato, :tipologia, :borda, :cor, :local_uso, :data_previsao, :preco, :cliente, :obra, :nome_produto, :marca, :embalagem, :observacao)";
 
     try {
         $stmt = $conexao -> prepare($sql);
@@ -40,7 +40,7 @@ if (isset($_POST['botaoEnviar'])) {
         $stmt -> bindParam(':embalagem', $embalagem);
         $stmt -> bindParam(':observacao', $observacao);
 
-        if ($stmt -> Execute()) {
+        if ($stmt -> execute()) {
         echo "<script>alert('Proposta enviada com sucesso!'); window.location.href = 'proposta_cadastro.php';</script>";
         } else {
         echo "<script>alert('Erro ao enviar proposta. Tente novamente.'); window.location.href = 'proposta_cadastro.php';</script>";
@@ -112,7 +112,7 @@ if (isset($_POST['botaoEnviar'])) {
             </div>
             <div class="entrada_formulario">
                 <label for="preco">Referência de preço (se houver)</label>
-                <input type="number" name="preco" placeholder="Ex: 99.90">
+                <input type="number" name="preco" placeholder="Ex: 99">
             </div>
             <div class="entrada_formulario">
                 <label for="cliente">Cliente</label>

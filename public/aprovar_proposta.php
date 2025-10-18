@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('../src/config/conexao.php');
+include(__DIR__ . '/../src/config/conexao.php');
 
 // Verifica se o ID foi passado
 if(!isset($_GET['id'])) {
@@ -11,10 +11,10 @@ $id = intval($_GET['id']);
 
 // Atualiza o status no banco de dados
 
-$stmt = $conexao -> prepare("UPDATE formulario SET status = 'Aprovado' WHERE id = :id");
+$stmt = $conexao -> prepare("UPDATE formulario SET status = CONCAT('Aprovado ',DATE_FORMAT(NOW(), '%d/%m/%Y')) WHERE id = :id");
 $stmt -> execute([':id' => $id]);
 
 // Redirecionando para a listagem
-header('localization: proposta_fases.php');
+header('location: proposta_fases.php');
 exit;
 ?>
