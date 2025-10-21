@@ -41,9 +41,9 @@ if (isset($_POST['botaoEnviar'])) {
         $stmt -> bindParam(':observacao', $observacao);
 
         if ($stmt -> execute()) {
-        echo "<script>alert('Proposta enviada com sucesso!'); window.location.href = 'proposta_cadastro.php';</script>";
+            echo "<script>alert('Proposta enviada com sucesso!'); window.location.href = 'proposta_cadastro.php';</script>";
         } else {
-        echo "<script>alert('Erro ao enviar proposta. Tente novamente.'); window.location.href = 'proposta_cadastro.php';</script>";
+            echo "<script>alert('Erro ao enviar proposta. Tente novamente.'); window.location.href = 'proposta_cadastro.php';</script>";
         }
     } catch (PDOException $e) {
         echo "Erro ao enviar proposta: " . $e->getMessage();
@@ -56,11 +56,143 @@ if (isset($_POST['botaoEnviar'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário Propostas</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Formulário de Propostas</title>
+
+    <style>
+        /* ===== Reset ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #7d7d7dff, #d3d3d3ff);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header.barra_navegacao {
+            background-color: #9a9a9a;
+            padding: 15px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            position: sticky;
+        }
+
+        .navbar_container ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .navbar_container a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .navbar_container a:hover {
+            text-decoration: underline;
+        }
+
+        main.main_proposta_cadastro {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+        }
+
+        form {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            padding: 40px 50px;
+            width: 100%;
+            max-width: 700px;
+            animation: fadeIn 0.8s ease-in-out;
+            font-size: 1rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            text-align: center;
+            color: #3a3a3a;
+            margin-bottom: 25px;
+        }
+
+        .entrada_formulario {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 18px;
+        }
+
+        label {
+            text-align: left;
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 6px;
+            font-size: 1rem;
+        }
+
+        input, select {
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+            transition: border 0.2s;
+            font-size: 0.8rem;
+        }
+
+        input:focus, select:focus {
+            border-color: #a9a9a9ff;
+            outline: none;
+        }
+
+        .botao_enviar {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        button {
+            padding: 12px 30px;
+            background-color: #9a9a9a;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: #626364;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        @media (max-width: 768px) {
+            form {
+                padding: 30px 25px;
+            }
+        }
+    </style>
 </head>
 <body>
-        <header class="barra_navegacao">
+    <header class="barra_navegacao">
         <nav class="navbar">
             <div class="navbar_container">
                 <ul>
@@ -69,105 +201,95 @@ if (isset($_POST['botaoEnviar'])) {
                 </ul>
             </div>
         </nav>
-        </header>
-        <main class="main_proposta_cadastro">
+    </header>
+
+    <main class="main_proposta_cadastro">
         <form action="proposta_cadastro.php" method="POST">
-            <div>
-                <h1>Dados para Personalização de Produto (Proposta PR)</h1>
-            </div>
+            <h1>Dados para Personalização de Produto</h1>
 
             <div class="entrada_formulario">
                 <label for="volume">Volume</label>
                 <input type="text" name="volume" placeholder="Ex: 567.10 ou 1000.12" required>
+            </div>
+
+            <div class="entrada_formulario">
                 <label for="unidade_medida">Unidade de medida</label>
                 <select name="unidade_medida" required>
                     <option value="">Selecione...</option>
                     <option value="pc">pc</option>
-                    <option value="m2">m2</option>
+                    <option value="m2">m²</option>
                 </select>
             </div>
+
             <div class="entrada_formulario">
                 <label for="formato">Formato (cm)</label>
                 <input type="text" name="formato" placeholder="Ex: 10x60, 20x120, 60x60, etc">
             </div>
+
             <div class="entrada_formulario">
                 <label for="tipologia">Tipologia</label>
                 <input type="text" name="tipologia" placeholder="Ex: Azulejo, Porcelanato, etc">
             </div>
+
             <div class="entrada_formulario">
-                <label for="borda">Bold ou retificado</label>
+                <label for="borda">Borda</label>
                 <input type="text" name="borda" placeholder="Ex: Bold ou Retificado">
             </div>
+
             <div class="entrada_formulario">
                 <label for="cor">Cor</label>
                 <input type="text" name="cor" placeholder="Ex: Branco, Cinza, Bege, etc">
             </div>
+
             <div class="entrada_formulario">
                 <label for="local_uso">Local de uso do produto</label>
                 <input type="text" name="local_uso" placeholder="Ex: Piso, Parede, Fachada, Piscina, etc">
             </div>
+
             <div class="entrada_formulario">
                 <label for="data_previsao">Previsão entrega da obra/projeto</label>
-                <input type="date" name="data_previsao" placeholder="Ex: 01/10/2025" required>
+                <input type="date" name="data_previsao" required>
             </div>
+
             <div class="entrada_formulario">
                 <label for="preco">Referência de preço (se houver)</label>
                 <input type="number" name="preco" placeholder="Ex: 99">
             </div>
+
             <div class="entrada_formulario">
                 <label for="cliente">Cliente</label>
                 <input type="text" name="cliente" placeholder="Ex: Ruan, Maria, João, etc">
             </div>
+
             <div class="entrada_formulario">
-                <label for="obra">Nome obra</label>
+                <label for="obra">Nome da obra</label>
                 <input type="text" name="obra" placeholder="Ex: Edifício Tal, Casa Tal, etc">
             </div>
+
             <div class="entrada_formulario">
-                <label for="nome_produto">Sugestão nome do produto (se houver)</label>
-                <input type="text" name="nome_produto" placeholder="Ex: Marmore Carrara, Cimento Queimado, etc">
+                <label for="nome_produto">Sugestão nome do produto</label>
+                <input type="text" name="nome_produto" placeholder="Ex: Mármore Carrara, Cimento Queimado, etc">
             </div>
+
             <div class="entrada_formulario">
                 <label for="marca">Marca sugerida</label>
-                <input type="text" name="marca" placeholder="Ex: Eliane, Decortiles, Elizabeth, Eliane Floor, etc">
+                <input type="text" name="marca" placeholder="Ex: Eliane, Decortiles, Elizabeth, etc">
             </div>
+
             <div class="entrada_formulario">
                 <label for="embalagem">Embalagem especial</label>
                 <input type="text" name="embalagem" placeholder="Ex: Sim ou Não">
             </div>
+
             <div class="entrada_formulario">
                 <label for="observacao">Observações</label>
-                <input type="text" name="observacao" placeholder="Ex: Observações adicionais">
+                <input type="text" name="observacao" placeholder="Observações adicionais">
             </div>
+
             <div class="botao_enviar">
-                <button type="submit" name="botaoEnviar">Enviar Solicitação!</button>
+                <button type="submit" name="botaoEnviar">Enviar Solicitação</button>
             </div>
-
         </form>
-        </main>
-
-
-    
-
-<!--
-Volume (pç ou m²):   
-Formato (cm):
-Tipologia (Azulejo, Porcelanato e etc):
-Acabamento:
-Bold ou retificado:
-Cor:
-Local de uso do produto (piso, parede, fachada, piscina, etc.):                               
-Previsão entrega da obra/projeto:
-Referência de preço (se houver):
-Cliente:
-Nome obra (se houver):
-Sugestão nome do produto (se houver):
-Marca sugerida* (Eliane/Decortiles/Elizabeth):
-Embalagem especial (sim ou não):
-Observações:
--->
-
-
-
-
+    </main>
 </body>
 </html>
