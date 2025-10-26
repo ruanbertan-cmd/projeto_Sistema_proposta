@@ -8,7 +8,7 @@ if (!isset($_GET['id'])) {
 
 $id = intval($_GET['id']); // Sanitiza
 
-$stmt = $conexao->query("SELECT id, volume, unidade_medida, formato, tipologia, borda, cor, local_uso, data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, observacao, status 
+$stmt = $conexao->query("SELECT id, volume, unidade_medida, formato, tipologia, borda, cor, local_uso, data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, observacao, status, comentario_Lib_Produto 
         FROM formulario 
         WHERE id = $id");
 
@@ -103,7 +103,7 @@ $row = $result[0];
 
         th {
             background-color: #e0e0e0;
-            font-weight: 10rem;
+            font-weight: 600;
 
         }
 
@@ -151,19 +151,6 @@ $row = $result[0];
             font-weight: bold;
         }
 
-        .voltar {
-            display: inline-block;
-            margin-top: 10px;
-            text-decoration: none;
-            color: #444;
-            font-weight: 500;
-            transition: 0.2s;
-        }
-
-        .voltar:hover {
-            text-decoration: underline;
-        }
-
         @media (max-width: 768px) {
             table {
                 width: 100%;
@@ -172,6 +159,106 @@ $row = $result[0];
                 flex-direction: column;
                 gap: 10px;
             }
+        }
+        /* ===== Área de Comentário ===== */
+        form {
+            width: 90%;
+            background-color: #f1f1f1;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 80px;
+            border: 1px solid #aaa;
+            border-radius: 6px;
+            padding: 10px;
+            resize: vertical;
+            font-size: 0.9rem;
+            color: #333;
+            background-color: #fafafa;
+            transition: 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #666;
+            background-color: #fff;
+            box-shadow: 0 0 0 2px #9a9a9a60;
+        }
+
+        /* ===== Botão Salvar Comentário ===== */
+        button[type="submit"] {
+            margin-top: 12px;
+            background-color: #555;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #6c6c6c;
+            transform: scale(1.03);
+        }
+
+        /* ===== Exibição do Comentário ===== */
+        .comentario-container {
+            width: 90%;
+            background-color: #ffffffd9;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        .comentario-container strong {
+            color: #222;
+            font-size: 0.9rem;
+        }
+
+        .comentario-text {
+            margin-top: 5px;
+            color: #333;
+            font-size: 0.85rem;
+        }
+
+        /* ===== Status ===== */
+        .status_box {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 6px;
+            background-color: #444;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            margin-top: 10px;
+        }
+
+        /* ===== Voltar ===== */
+        .voltar {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 8px 16px;
+            background-color: #e1e1e1;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .voltar:hover {
+            background-color: #ccc;
+            transform: scale(1.03);
         }
     </style>
 </head>
@@ -208,22 +295,25 @@ $row = $result[0];
         <tr><th>Observação</th><td><?= nl2br(htmlspecialchars($row['observacao'])); ?></td></tr>
     </table>
 
-    <div class="botoes_acoes">
-        <?php if($row['status'] === 'Em analise'): ?>
-            <a class="aprovar" href="aprovar_proposta.php?id=<?= htmlspecialchars($row['id']) ?>" onclick="return confirm('Tem certeza que deseja aprovar esta proposta?');">Aprovar</a>
-            <a class="rejeitar" href="rejeitar_proposta.php?id=<?= htmlspecialchars($row['id']) ?>" onclick="return confirm('Tem certeza que deseja rejeitar esta proposta?');">Rejeitar</a>
-        <?php else: ?>
-            <?php 
-                $status = $row['status'];
-                $color = '#333';
-                if(str_starts_with($status,'Aprovado')) $color = '#62f68cff';
-                elseif(str_starts_with($status,'Rejeitado')) $color = '#f95a5aff';
-            ?>
-            <p class="status_text" style="color: <?= $color ?>;">Status: <?= htmlspecialchars($status) ?></p>
-        <?php endif; ?>
-    </div>
-    
+    <form method="POST" action="comentario_proposta.php?id=<?= htmlspecialchars($row['id']) ?>">
+        <textarea name="comentario_Lib_Produto" placeholder="Escreva um comentário..." required></textarea>
+        <button type="submit">Salvar comentário</button>
+    </form>
 
+    <div class="comentario-container">
+        <strong>Comentário:</strong>
+        <p class="comentario-text"><?= htmlspecialchars($row['comentario_Lib_Produto'] ?? 'Nenhum comentário ainda.') ?></p>
+    </div>
+
+    <?php 
+        $status = $row['status'];
+        $color = '#333';
+        if(str_starts_with($status,'Aprovado')) $color = '#62f68cff';
+        elseif(str_starts_with($status,'Rejeitado')) $color = '#f95a5aff';
+    ?>
+    <p class="status_box" style="background-color: <?= $color ?>;">Status: <?= htmlspecialchars($status) ?></p>
+
+    <br>
     <a class="voltar" href="proposta_fases.php">Voltar</a>
 </main>
 
