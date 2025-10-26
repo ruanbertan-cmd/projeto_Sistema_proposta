@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
 // Redireciona de volta para os detalhes da proposta
-header("location: proposta_detalhe.php?id=" . intval($_GET['id']));
+header("location: proposta_detalhes.php?id=" . intval($_GET['id']));
 exit;
 }
 ?>
