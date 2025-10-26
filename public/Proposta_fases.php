@@ -64,7 +64,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         border-radius: 12px;
         box-shadow: 0 8px 25px rgba(0,0,0,0.2);
         width: 100%;
-        max-width: 1100px;
+        max-width: 1400px;
         overflow-x: auto;
         padding: 20px;
         animation: fadeIn 0.8s ease-in-out;
