@@ -3,21 +3,21 @@ session_start();
 include(__DIR__ . '/../src/config/conexao.php');
 
 if (isset($_POST['botaoEnviar'])) {
-    $volume = $_POST['volume'] ?? '';
-    $unidade_medida = $_POST['unidade_medida'] ?? '';
-    $formato = $_POST['formato'] ?? '';
-    $tipologia = $_POST['tipologia'] ?? '';
-    $borda = $_POST['borda'] ?? '';
-    $cor = $_POST['cor'] ?? '';
-    $local_uso = $_POST['local_uso'] ?? '';
-    $data_previsao = $_POST['data_previsao'] ?? '';
-    $preco = $_POST['preco'] ?? '';
-    $cliente = $_POST['cliente'] ?? '';
-    $obra = $_POST['obra'] ?? '';
-    $nome_produto = $_POST['nome_produto'] ?? '';
-    $marca = $_POST['marca'] ?? '';
-    $embalagem = $_POST['embalagem'] ?? '';
-    $observacao = $_POST['observacao'] ?? '';
+    $volume = floatval(str_replace(',', '.', preg_replace('/[^0-9.,]/', '', $_POST['volume'] ?? '')));
+    $unidade_medida = mb_strtoupper($_POST['unidade_medida'] ?? '', 'UTF-8');
+    $formato = mb_strtoupper($_POST['formato'] ?? '', 'UTF-8');
+    $tipologia = mb_strtoupper($_POST['tipologia'] ?? '', 'UTF-8');
+    $borda = mb_strtoupper($_POST['borda'] ?? '', 'UTF-8');
+    $cor = mb_strtoupper($_POST['cor'] ?? '', 'UTF-8');
+    $local_uso = mb_strtoupper($_POST['local_uso'] ?? '', 'UTF-8');
+    $data_previsao = mb_strtoupper($_POST['data_previsao'] ?? '', 'UTF-8');
+    $preco = floatval(str_replace(',', '.', preg_replace('/[^0-9.,]/', '', $_POST['preco'] ?? '')));
+    $cliente = mb_strtoupper($_POST['cliente'] ?? '', 'UTF-8');
+    $obra = mb_strtoupper($_POST['obra'] ?? '', 'UTF-8');
+    $nome_produto = mb_strtoupper($_POST['nome_produto'] ?? '', 'UTF-8');
+    $marca = mb_strtoupper($_POST['marca'] ?? '', 'UTF-8');
+    $embalagem = mb_strtoupper($_POST['embalagem'] ?? '', 'UTF-8');
+    $observacao = mb_strtoupper($_POST['observacao'] ?? '', 'UTF-8');
 
     $sql = "INSERT INTO formulario(volume,unidade_medida,formato,tipologia,borda,cor,local_uso,data_previsao,preco,cliente,obra,nome_produto,marca,embalagem,observacao)
     VALUES (:volume, :unidade_medida, :formato, :tipologia, :borda, :cor, :local_uso, :data_previsao, :preco, :cliente, :obra, :nome_produto, :marca, :embalagem, :observacao)";
@@ -209,7 +209,7 @@ if (isset($_POST['botaoEnviar'])) {
 
             <div class="entrada_formulario">
                 <label for="volume">Volume</label>
-                <input type="text" name="volume" placeholder="Ex: 567.10 ou 1000.12" required>
+                <input type="number" name="volume" step="0.01" placeholder="Ex: 567.10 ou 1000.12" required>
             </div>
 
             <div class="entrada_formulario">
@@ -223,47 +223,47 @@ if (isset($_POST['botaoEnviar'])) {
 
             <div class="entrada_formulario">
                 <label for="formato">Formato (cm)</label>
-                <input type="text" name="formato" placeholder="Ex: 10x60, 20x120, 60x60, etc">
+                <input type="text" name="formato" placeholder="Ex: 10x60, 20x120, 60x60, etc" required>
             </div>
 
             <div class="entrada_formulario">
                 <label for="tipologia">Tipologia</label>
-                <input type="text" name="tipologia" placeholder="Ex: Azulejo, Porcelanato, etc">
+                <input type="text" name="tipologia" placeholder="Ex: Azulejo, Porcelanato GL, etc" required>
             </div>
 
             <div class="entrada_formulario">
                 <label for="borda">Borda</label>
-                <input type="text" name="borda" placeholder="Ex: Bold ou Retificado">
+                <input type="text" name="borda" placeholder="Ex: Bold ou Retificado" required>
             </div>
 
             <div class="entrada_formulario">
                 <label for="cor">Cor</label>
-                <input type="text" name="cor" placeholder="Ex: Branco, Cinza, Bege, etc">
+                <input type="text" name="cor" placeholder="Ex: Branco, Cinza, Bege, etc" required>
             </div>
 
             <div class="entrada_formulario">
                 <label for="local_uso">Local de uso do produto</label>
-                <input type="text" name="local_uso" placeholder="Ex: Piso, Parede, Fachada, Piscina, etc">
+                <input type="text" name="local_uso" placeholder="Ex: Piso, Parede, Fachada, Piscina, etc" required>
             </div>
 
             <div class="entrada_formulario">
                 <label for="data_previsao">Previsão entrega da obra/projeto</label>
-                <input type="date" name="data_previsao" required>
+                <input type="date" name="data_previsao" min="<?= date('Y-m-d') ?>" required>
             </div>
 
             <div class="entrada_formulario">
                 <label for="preco">Referência de preço (se houver)</label>
-                <input type="number" name="preco" placeholder="Ex: 99">
+                <input type="number" name="preco" step="0.01" placeholder="Ex: 99,99">
             </div>
 
             <div class="entrada_formulario">
                 <label for="cliente">Cliente</label>
-                <input type="text" name="cliente" placeholder="Ex: Ruan, Maria, João, etc">
+                <input type="text" name="cliente" placeholder="Ex: Construtora Tal, etc" required>
             </div>
 
             <div class="entrada_formulario">
                 <label for="obra">Nome da obra</label>
-                <input type="text" name="obra" placeholder="Ex: Edifício Tal, Casa Tal, etc">
+                <input type="text" name="obra" placeholder="Ex: Edifício Tal, Casa Tal, etc" required>
             </div>
 
             <div class="entrada_formulario">
@@ -273,12 +273,12 @@ if (isset($_POST['botaoEnviar'])) {
 
             <div class="entrada_formulario">
                 <label for="marca">Marca sugerida</label>
-                <input type="text" name="marca" placeholder="Ex: Eliane, Decortiles, Elizabeth, etc">
+                <input type="text" name="marca" placeholder="Ex: Eliane, Decortiles, Elizabeth, Eliane Floor, etc" required>
             </div>
 
             <div class="entrada_formulario">
                 <label for="embalagem">Embalagem especial</label>
-                <input type="text" name="embalagem" placeholder="Ex: Sim ou Não">
+                <input type="text" name="embalagem" placeholder="Ex: Sim ou Não" required>
             </div>
 
             <div class="entrada_formulario">

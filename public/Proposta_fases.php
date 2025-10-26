@@ -68,6 +68,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         overflow-x: auto;
         padding: 20px;
         animation: fadeIn 0.8s ease-in-out;
+        
     }
 
     @keyframes fadeIn {
@@ -84,6 +85,9 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     table.tabela_propostas {
         width: 100%;
         border-collapse: collapse;
+        border: 1px solid #999;
+        border-radius: 6px;
+        overflow: hidden;
     }
 
     table.tabela_propostas th, table.tabela_propostas td {

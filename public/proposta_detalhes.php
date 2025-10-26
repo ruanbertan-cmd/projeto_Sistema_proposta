@@ -89,7 +89,9 @@ $row = $result[0];
             box-shadow: 0 8px 25px rgba(0,0,0,0.2);
             margin-bottom: 15px;
             font-size: 0.8rem;
-            border-radius: 12px;
+            border: 1px solid #999;
+            border-radius: 6px;
+            overflow: hidden;
         }
 
         th, td {
@@ -102,6 +104,7 @@ $row = $result[0];
         th {
             background-color: #e0e0e0;
             font-weight: 10rem;
+
         }
 
         tr:last-child td {
@@ -219,6 +222,7 @@ $row = $result[0];
             <p class="status_text" style="color: <?= $color ?>;">Status: <?= htmlspecialchars($status) ?></p>
         <?php endif; ?>
     </div>
+    
 
     <a class="voltar" href="proposta_fases.php">Voltar</a>
 </main>
