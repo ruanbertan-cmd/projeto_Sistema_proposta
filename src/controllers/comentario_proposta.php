@@ -1,10 +1,13 @@
 <?php
-session_start();
-include(__DIR__ . '/../src/config/conexao.php');
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+include(__DIR__ . '/../config/conexao.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $comentario = trim($_POST['comentario_Lib_Produto'] ?? '');
-    $id = intval($_GET['id']); // o ID do produto vindo pela URL
+    $id = intval($_GET['id']); // ID vindo pela URL
 
     if (!empty($comentario)) {
         $stmt = $conexao->prepare("
@@ -18,8 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
     }
 
-// Redireciona de volta para os detalhes da proposta
-header("location: proposta_detalhes.php?id=" . intval($_GET['id']));
-exit;
+    // Redireciona de volta para os detalhes da proposta
+    header("Location: proposta_detalhes.php?id=$id");
+    exit;
 }
 ?>

@@ -295,7 +295,7 @@ $row = $result[0];
         <tr><th>Observação</th><td><?= nl2br(htmlspecialchars($row['observacao'])); ?></td></tr>
     </table>
 
-    <form method="POST" action="comentario_proposta.php?id=<?= htmlspecialchars($row['id']) ?>">
+    <form method="POST" action="actions.php?action=comentario&id=<?= htmlspecialchars($row['id']) ?>">
         <textarea name="comentario_Lib_Produto" placeholder="Escreva um comentário..." required></textarea>
         <button type="submit">Salvar comentário</button>
     </form>

@@ -177,9 +177,9 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td><a href="proposta_detalhes.php?id=<?= $row['id'] ?>" class="detalhes">Ver Detalhes</a></td>
                     <td>
                         <?php if ($row['status'] === 'Em analise'): ?>
-                            <a href="aprovar_proposta.php?id=<?= htmlspecialchars($row['id']) ?>" class="aprovar"
+                            <a href="actions.php?action=aprovar&id=<?= htmlspecialchars($row['id']) ?>" class="aprovar"
                                onclick="return confirm('Tem certeza que deseja aprovar esta proposta?');">Aprovar</a>
-                            <a href="rejeitar_proposta.php?id=<?= htmlspecialchars($row['id']) ?>" class="rejeitar"
+                            <a href="actions.php?action=rejeitar&id=<?= htmlspecialchars($row['id']) ?>"  class="rejeitar"
                                onclick="return confirm('Tem certeza que deseja rejeitar esta proposta?');">Rejeitar</a>
                         <?php else: ?>
                         <?php

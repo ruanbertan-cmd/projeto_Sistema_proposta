@@ -1,13 +1,9 @@
 <?php
-session_start();
-include(__DIR__ . '/../src/config/conexao.php');
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
-// Verifica se o ID foi passado
-if(!isset($_GET['id'])) {
-    die('ID não informado.');
-} 
-
-$id = intval($_GET['id']);
+include(__DIR__ . '/../config/conexao.php');
 
 // Atualiza o status no banco de dados
 
