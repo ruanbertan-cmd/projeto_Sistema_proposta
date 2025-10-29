@@ -94,7 +94,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         padding: 12px 10px;
         text-align: center;
         border-bottom: 1px solid #ccc;
-        font-size: 0.3rem;
+        font-size: 0.7rem;
     }
 
     table.tabela_propostas th {
