@@ -19,6 +19,19 @@ if (isset($_POST['botaoEnviar'])) {
     $embalagem = mb_strtoupper($_POST['embalagem'] ?? '', 'UTF-8');
     $observacao = mb_strtoupper($_POST['observacao'] ?? '', 'UTF-8');
 
+    include(__DIR__ . '/../src/data/verificar_lote.php');
+
+    // Definicao do codigo da empresa/unidade conforme login ou selecao
+    $empresa = 1; // exemplo fixo
+    $unidade = 1;
+
+    $resultado = verificarLoteMinimoCSV($empresa, $unidade, $formato, $volume);
+
+    if (!$resultado['status']) {
+        echo "<script>alert('{$resultado['mensagem']}'); window.history.back();</script>";
+        exit; //Interrompe o cadastro se o lote for insuficiente
+    }
+
     $sql = "INSERT INTO formulario(volume,unidade_medida,formato,tipologia,borda,cor,local_uso,data_previsao,preco,cliente,obra,nome_produto,marca,embalagem,observacao)
     VALUES (:volume, :unidade_medida, :formato, :tipologia, :borda, :cor, :local_uso, :data_previsao, :preco, :cliente, :obra, :nome_produto, :marca, :embalagem, :observacao)";
 
