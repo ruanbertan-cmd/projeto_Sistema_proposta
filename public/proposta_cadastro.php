@@ -5,6 +5,7 @@ include(__DIR__ . '/../src/config/conexao.php');
 if (isset($_POST['botaoEnviar'])) {
     $volume = floatval(str_replace(',', '.', preg_replace('/[^0-9.,]/', '', $_POST['volume'] ?? '')));
     $unidade_medida = mb_strtoupper($_POST['unidade_medida'] ?? '', 'UTF-8');
+    $polo = mb_strtoupper($_POST['polo'] ?? '', 'UTF-8');
     $formato = mb_strtoupper($_POST['formato'] ?? '', 'UTF-8');
     $tipologia = mb_strtoupper($_POST['tipologia'] ?? '', 'UTF-8');
     $borda = mb_strtoupper($_POST['borda'] ?? '', 'UTF-8');
@@ -19,7 +20,7 @@ if (isset($_POST['botaoEnviar'])) {
     $embalagem = mb_strtoupper($_POST['embalagem'] ?? '', 'UTF-8');
     $observacao = mb_strtoupper($_POST['observacao'] ?? '', 'UTF-8');
 
-    include(__DIR__ . '/../src/data/verificar_lote.php');
+    include(__DIR__ . '/../src/controllers/verificar_lote.php');
 
     // Definicao do codigo da empresa/unidade conforme login ou selecao
     $empresa = 1; // exemplo fixo
@@ -32,13 +33,14 @@ if (isset($_POST['botaoEnviar'])) {
         exit; //Interrompe o cadastro se o lote for insuficiente
     }
 
-    $sql = "INSERT INTO formulario(volume,unidade_medida,formato,tipologia,borda,cor,local_uso,data_previsao,preco,cliente,obra,nome_produto,marca,embalagem,observacao)
-    VALUES (:volume, :unidade_medida, :formato, :tipologia, :borda, :cor, :local_uso, :data_previsao, :preco, :cliente, :obra, :nome_produto, :marca, :embalagem, :observacao)";
+    $sql = "INSERT INTO formulario(volume,unidade_medida,polo,formato,tipologia,borda,cor,local_uso,data_previsao,preco,cliente,obra,nome_produto,marca,embalagem,observacao)
+    VALUES (:volume, :unidade_medida, :polo, :formato, :tipologia, :borda, :cor, :local_uso, :data_previsao, :preco, :cliente, :obra, :nome_produto, :marca, :embalagem, :observacao)";
 
     try {
         $stmt = $conexao -> prepare($sql);
         $stmt -> bindParam(':volume', $volume);
         $stmt -> bindParam(':unidade_medida', $unidade_medida);
+        $stmt -> bindParam(':polo', $polo);
         $stmt -> bindParam(':formato', $formato);
         $stmt -> bindParam(':tipologia', $tipologia);
         $stmt -> bindParam(':borda', $borda);
@@ -231,6 +233,16 @@ if (isset($_POST['botaoEnviar'])) {
                     <option value="">Selecione...</option>
                     <option value="pc">pc</option>
                     <option value="m2">m²</option>
+                </select>
+            </div>
+
+            <div class="entrada_formulario">
+                <label for="polo">Polo</label>
+                <select name="polo" required>
+                    <option value="">Selecione...</option>
+                    <option value="SC">SC</option>
+                    <option value="BA">BA</option>
+                    <option value="PB">PB</option>
                 </select>
             </div>
 

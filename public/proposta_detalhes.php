@@ -8,7 +8,7 @@ if (!isset($_GET['id'])) {
 
 $id = intval($_GET['id']); // Sanitiza
 
-$stmt = $conexao->query("SELECT id, volume, unidade_medida, formato, tipologia, borda, cor, local_uso, data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, observacao, status, comentario_Lib_Produto 
+$stmt = $conexao->query("SELECT id, volume, unidade_medida, polo, formato, tipologia, borda, cor, local_uso, data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, observacao, status, comentario_Lib_Produto 
         FROM formulario 
         WHERE id = $id");
 
@@ -281,6 +281,7 @@ $row = $result[0];
     <table>
         <tr><th>Volume</th><td><?= htmlspecialchars($row['volume'] . ' ' . $row['unidade_medida']); ?></td></tr>
         <tr><th>Formato</th><td><?= htmlspecialchars($row['formato']); ?></td></tr>
+        <tr><th>Polo</th><td><?= htmlspecialchars($row['polo']); ?></td></tr>
         <tr><th>Tipologia</th><td><?= htmlspecialchars($row['tipologia']); ?></td></tr>
         <tr><th>Borda</th><td><?= htmlspecialchars($row['borda']); ?></td></tr>
         <tr><th>Cor</th><td><?= htmlspecialchars($row['cor']); ?></td></tr>

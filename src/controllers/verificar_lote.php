@@ -1,44 +1,67 @@
 <?php
-function verificarLoteMinimoCSV($empresa, $unidade, $formato, $volume)
-{
-    // Caminho do CSV (exemplo)
-    $caminho_csv = __DIR__ . '/../../dados/lotes.csv'; // coloque onde realmente está seu CSV
+header('Content-Type: application/json; charset=utf-8');
 
-    if (!file_exists($caminho_csv)) {
-        return [
-            'status' => false,
-            'mensagem' => 'Arquivo CSV de lotes não encontrado.'
-        ];
-    }
+// Caminho do CSV
+$arquivoCSV = __DIR__ . '/../data/produtos.csv';
 
-    if (($handle = fopen($caminho_csv, 'r')) !== false) {
-        $cabecalho = fgetcsv($handle, 1000, ';'); // lê a primeira linha (cabeçalho)
-        while (($linha = fgetcsv($handle, 1000, ';')) !== false) {
-            $dados = array_combine($cabecalho, $linha);
+// Recebe os dados enviados pelo formulário
+$codigoEmpresa = $_POST['codigo_empresa'] ?? null;
+$codigoUnidade = $_POST['codigo_unidade'] ?? null;
+$formato       = $_POST['formato'] ?? null;
+$loteInformado = (int) ($_POST['lote'] ?? 0);
 
-            // Normaliza para evitar problemas com maiúsculas e espaços
-            $empresaCSV = trim($dados['empresa']);
-            $unidadeCSV = trim($dados['unidade']);
-            $formatoCSV = strtoupper(trim($dados['formato']));
-            $loteMinimo = floatval(str_replace(',', '.', $dados['lote_minimo']));
-
-            // Verifica se corresponde à empresa, unidade e formato
-            if ($empresaCSV == $empresa && $unidadeCSV == $unidade && $formatoCSV == strtoupper($formato)) {
-                fclose($handle);
-                if ($volume < $loteMinimo) {
-                    return [
-                        'status' => false,
-                        'mensagem' => "O volume informado ($volume) é menor que o lote mínimo ($loteMinimo) para o formato {$formato}."
-                    ];
-                } else {
-                    return ['status' => true];
-                }
-            }
-        }
-        fclose($handle);
-    }
-
-    return [
-        'status' => true // se não encontrar registro, consideramos ok
-    ];
+if (!$codigoEmpresa || !$codigoUnidade || !$formato || !$loteInformado) {
+    echo json_encode(['erro' => 'Dados insuficientes para análise.']);
+    exit;
 }
+
+if (!file_exists($arquivoCSV)) {
+    echo json_encode(['erro' => 'Arquivo de base (produtos.csv) não encontrado.']);
+    exit;
+}
+
+$loteMinimoEncontrado = null;
+
+// Abre e lê o CSV
+if (($handle = fopen($arquivoCSV, 'r')) !== false) {
+    $cabecalho = fgetcsv($handle, 1000, ';'); // Lê a primeira linha (cabeçalho)
+
+    while (($linha = fgetcsv($handle, 1000, ';')) !== false) {
+        // Mapeia a linha de acordo com o cabeçalho
+        $dados = array_combine($cabecalho, $linha);
+
+        // Normaliza os campos (removendo espaços e letras maiúsculas/minúsculas)
+        $emp = trim($dados['Emp']);
+        $uni = trim($dados['Uni']);
+        $form = trim($dados['Formato']);
+        $loteMin = (int) preg_replace('/\D/', '', $dados['Lote']); // garante que seja numérico
+
+        if ($emp == $codigoEmpresa && $uni == $codigoUnidade && strcasecmp($form, $formato) == 0) {
+            $loteMinimoEncontrado = $loteMin;
+            break;
+        }
+    }
+
+    fclose($handle);
+}
+
+// Resposta de acordo com o resultado
+if ($loteMinimoEncontrado !== null) {
+    if ($loteInformado < $loteMinimoEncontrado) {
+        echo json_encode([
+            'status' => 'alerta',
+            'mensagem' => "O lote informado ({$loteInformado}) é menor que o mínimo ({$loteMinimoEncontrado}) para este formato e unidade."
+        ]);
+    } else {
+        echo json_encode([
+            'status' => 'ok',
+            'mensagem' => "O lote informado ({$loteInformado}) atende ao mínimo ({$loteMinimoEncontrado})."
+        ]);
+    }
+} else {
+    echo json_encode([
+        'status' => 'nao_encontrado',
+        'mensagem' => "Não foi encontrado um registro correspondente (Empresa {$codigoEmpresa}, Unidade {$codigoUnidade}, Formato {$formato})."
+    ]);
+}
+?>
