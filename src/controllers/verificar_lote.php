@@ -1,67 +1,67 @@
 <?php
-header('Content-Type: application/json; charset=utf-8');
-
 // Caminho do CSV
-$arquivoCSV = __DIR__ . '/../data/produtos.csv';
+$caminhoCsv = __DIR__ . '/../data/produtos.csv';
 
-// Recebe os dados enviados pelo formulário
-$codigoEmpresa = $_POST['codigo_empresa'] ?? null;
-$codigoUnidade = $_POST['codigo_unidade'] ?? null;
-$formato       = $_POST['formato'] ?? null;
-$loteInformado = (int) ($_POST['lote'] ?? 0);
+// Dados vindos do formulário
+$polo = $_POST['polo'] ?? null;
+$tipologia = $_POST['tipologia'] ?? null;
+$unidade_medida = $_POST['unidade_medida'] ?? null;
+$formato = $_POST['formato'] ?? null;
+$volume = (int) ($_POST['volume'] ?? 0);
 
-if (!$codigoEmpresa || !$codigoUnidade || !$formato || !$loteInformado) {
-    echo json_encode(['erro' => 'Dados insuficientes para análise.']);
-    exit;
+// Função para identificar a unidade (com base em Emp e Uni)
+function identificarUnidade($emp, $uni)
+{
+    if ($emp == 1 && in_array($uni, [1, 31, 63, 198, 192])) {
+        return "SC";
+    } elseif ($emp == 42 && $uni == 1) {
+        return "PB";
+    } elseif ($emp == 13 && $uni == 1) {
+        return "BA";
+    } else {
+        return "OUTRA";
+    }
 }
-
-if (!file_exists($arquivoCSV)) {
-    echo json_encode(['erro' => 'Arquivo de base (produtos.csv) não encontrado.']);
-    exit;
-}
-
-$loteMinimoEncontrado = null;
 
 // Abre e lê o CSV
-if (($handle = fopen($arquivoCSV, 'r')) !== false) {
-    $cabecalho = fgetcsv($handle, 1000, ';'); // Lê a primeira linha (cabeçalho)
+if (($handle = fopen($caminhoCsv, 'r')) !== false) {
+    // Ignora o cabeçalho
+    fgetcsv($handle, 1000, ';');
 
-    while (($linha = fgetcsv($handle, 1000, ';')) !== false) {
-        // Mapeia a linha de acordo com o cabeçalho
-        $dados = array_combine($cabecalho, $linha);
+    $aviso = null;
 
-        // Normaliza os campos (removendo espaços e letras maiúsculas/minúsculas)
-        $emp = trim($dados['Emp']);
-        $uni = trim($dados['Uni']);
-        $form = trim($dados['Formato']);
-        $loteMin = (int) preg_replace('/\D/', '', $dados['Lote']); // garante que seja numérico
+    while (($dados = fgetcsv($handle, 1000, ';')) !== false) {
+        // Estrutura esperada do CSV:
+        // Emp;Uni;;Bitola;Formato;Descricao;Sit;Lote;Lote Alternativo 1;Lote Alternativo 2
+        // (ajustando conforme sua planilha)
+        $emp = trim($dados[0] ?? '');
+        $uni = trim($dados[1] ?? '');
+        $formatoBase = trim($dados[4] ?? '');
+        $tipologiaBase = trim($dados[5] ?? '');
+        $loteMinimo = (int) trim($dados[7] ?? 0);
 
-        if ($emp == $codigoEmpresa && $uni == $codigoUnidade && strcasecmp($form, $formato) == 0) {
-            $loteMinimoEncontrado = $loteMin;
+        // Verifica correspondência entre polo, formato e tipologia
+        if (
+            identificarUnidade($emp, $uni) === $polo &&
+            strcasecmp($formatoBase, $formato) === 0 &&
+            strcasecmp($tipologiaBase, $tipologia) === 0
+        ) {
+            if ($volume < $loteMinimo) {
+                $aviso = "⚠️ O volume solicitado ($volume) é inferior ao lote mínimo ($loteMinimo) 
+                          para o formato $formato / tipologia $tipologia ($polo).";
+            }
             break;
         }
     }
 
     fclose($handle);
-}
 
-// Resposta de acordo com o resultado
-if ($loteMinimoEncontrado !== null) {
-    if ($loteInformado < $loteMinimoEncontrado) {
-        echo json_encode([
-            'status' => 'alerta',
-            'mensagem' => "O lote informado ({$loteInformado}) é menor que o mínimo ({$loteMinimoEncontrado}) para este formato e unidade."
-        ]);
+    // Exibe resultado
+    if ($aviso) {
+        echo "<p style='color:red;'>$aviso</p>";
     } else {
-        echo json_encode([
-            'status' => 'ok',
-            'mensagem' => "O lote informado ({$loteInformado}) atende ao mínimo ({$loteMinimoEncontrado})."
-        ]);
+        echo "<p style='color:green;'>✔ Volume atende o lote mínimo.</p>";
     }
 } else {
-    echo json_encode([
-        'status' => 'nao_encontrado',
-        'mensagem' => "Não foi encontrado um registro correspondente (Empresa {$codigoEmpresa}, Unidade {$codigoUnidade}, Formato {$formato})."
-    ]);
+    echo "<p style='color:red;'>Erro ao abrir o arquivo CSV.</p>";
 }
-?>
