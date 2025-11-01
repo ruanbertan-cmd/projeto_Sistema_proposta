@@ -52,7 +52,7 @@ function verificarLoteMinimoCSV($polo, $tipologia, $formato, $volume, $unidade_m
             }
             return [
                 'status' => true,
-                'mensagem' => "✔ Volume atende o lote mínimo ($loteMinimo $unBase)."
+                'mensagem' => "✅ Volume atende o lote mínimo ($loteMinimo $unBase)."
             ];
         }
     }
@@ -60,6 +60,6 @@ function verificarLoteMinimoCSV($polo, $tipologia, $formato, $volume, $unidade_m
     fclose($handle);
     return [
         'status' => true,
-        'mensagem' => "✔ Nenhum lote mínimo específico encontrado, volume aceito."
+        'mensagem' => "✅ Nenhum lote mínimo específico encontrado, volume aceito."
     ];
 }
