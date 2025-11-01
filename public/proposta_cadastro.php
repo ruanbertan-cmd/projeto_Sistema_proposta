@@ -229,7 +229,7 @@ if (isset($_POST['botaoEnviar'])) {
 
             <div class="entrada_formulario">
                 <label for="volume">Volume</label>
-                <input type="number" name="volume" step="0.01" placeholder="Ex: 567.10 ou 1000.12" required>
+                <input type="number" name="volume" step="0.01" placeholder="Ex: 2000, 3000.19 e etc" required>
             </div>
 
             <div class="entrada_formulario">
@@ -260,19 +260,18 @@ if (isset($_POST['botaoEnviar'])) {
                 <label for="tipologia">Tipologia</label>
                     <select name="tipologia" required>
                         <option value="">Selecione...</option>
-                        <option value="PORC GL">PORC GL</option>
-                        <option value="PORC UGL">PORC UGL</option>
-                        <option value="AZULEJO">AZULEJO</option>
-                        <option value="OUTRO">OUTRO</option>
+                        <option value="PORC GL">Porc GL</option>
+                        <option value="PORC UGL">Porc UGL</option>
+                        <option value="AZULEJO">Azulejo</option>
                     </select>
             </div>
 
             <div class="entrada_formulario">
-                <label for="borda">borda</label>
+                <label for="borda">Borda</label>
                     <select name="borda" required>
                         <option value="">Selecione...</option>
-                        <option value="RETIFICADO">RETIFICADO</option>
-                        <option value="BOLD">BOLD</option>
+                        <option value="RETIFICADO">Retificado</option>
+                        <option value="BOLD">Bold</option>
                     </select>
             </div>
 
@@ -308,23 +307,27 @@ if (isset($_POST['botaoEnviar'])) {
 
             <div class="entrada_formulario">
                 <label for="nome_produto">Sugestão nome do produto</label>
-                <input type="text" name="nome_produto" placeholder="Ex: Mármore Carrara, Cimento Queimado, etc">
+                <input type="text" name="nome_produto" placeholder="Ex: Marmore Branco Ac 120x120, Vila Dourada Ext 90x90, etc">
             </div>
 
             <div class="entrada_formulario">
                 <label for="marca">Marca sugerida</label>
                     <select name="marca" required>
                         <option value="">Selecione...</option>
-                        <option value="ELIZABETH">ELIZABETH</option>
-                        <option value="ELIANE">ELIANE</option>
-                        <option value="DECORTILES">DECORTILES</option>
-                        <option value="ELIANEFLOOR">ELIANEFLOOR</option>
+                        <option value="ELIANE">Eliane</option>
+                        <option value="DECORTILES">Decortiles</option>
+                        <option value="ELIZABETH">Elizabeth</option>
+                        <option value="ELIANEFLOOR">Elianefloor</option>
                     </select>
             </div>
 
             <div class="entrada_formulario">
                 <label for="embalagem">Embalagem especial</label>
-                <input type="text" name="embalagem" placeholder="Ex: Sim ou Não" required>
+                    <select name="embalagem" required>
+                        <option value="">Selecione...</option>
+                        <option value="SIM">Sim</option>
+                        <option value="NAO">Não</option>
+                    </select>
             </div>
 
             <div class="entrada_formulario">
