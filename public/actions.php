@@ -20,6 +20,9 @@ switch($action) {
     case 'comentario':
         include(__DIR__ . '/../src/controllers/comentario_proposta.php');
         break;
+    case 'lote':
+        include(__DIR__ . '/../src/controllers/verificar_lote.php');
+        break;
     default:
         die("Ação inválida.");
 }

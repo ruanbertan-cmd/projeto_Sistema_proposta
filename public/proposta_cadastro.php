@@ -1,65 +1,70 @@
 <?php
 session_start();
+
+// --- CONFIGURAÇÃO DE ERROS PARA PRODUÇÃO ---
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/logs/php_errors.log'); // Crie a pasta 'logs' com permissão de escrita
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
+
 include(__DIR__ . '/../src/config/conexao.php');
+include(__DIR__ . '/../src/functions/verificar_lote_func.php');
 
 if (isset($_POST['botaoEnviar'])) {
     $volume = floatval(str_replace(',', '.', preg_replace('/[^0-9.,]/', '', $_POST['volume'] ?? '')));
-    $unidade_medida = mb_strtoupper($_POST['unidade_medida'] ?? '', 'UTF-8');
-    $polo = mb_strtoupper($_POST['polo'] ?? '', 'UTF-8');
-    $formato = mb_strtoupper($_POST['formato'] ?? '', 'UTF-8');
-    $tipologia = mb_strtoupper($_POST['tipologia'] ?? '', 'UTF-8');
-    $borda = mb_strtoupper($_POST['borda'] ?? '', 'UTF-8');
-    $cor = mb_strtoupper($_POST['cor'] ?? '', 'UTF-8');
-    $local_uso = mb_strtoupper($_POST['local_uso'] ?? '', 'UTF-8');
-    $data_previsao = mb_strtoupper($_POST['data_previsao'] ?? '', 'UTF-8');
+    $unidade_medida = mb_strtoupper(trim($_POST['unidade_medida'] ?? ''), 'UTF-8');
+    $polo = mb_strtoupper(trim($_POST['polo'] ?? ''), 'UTF-8');
+    $formato = mb_strtoupper(trim($_POST['formato'] ?? ''), 'UTF-8');
+    $tipologia = mb_strtoupper(trim($_POST['tipologia'] ?? ''), 'UTF-8');
+    $borda = mb_strtoupper(trim($_POST['borda'] ?? ''), 'UTF-8');
+    $cor = mb_strtoupper(trim($_POST['cor'] ?? ''), 'UTF-8');
+    $local_uso = mb_strtoupper(trim($_POST['local_uso'] ?? ''), 'UTF-8');
+    $data_previsao = $_POST['data_previsao'] ?? '';
     $preco = floatval(str_replace(',', '.', preg_replace('/[^0-9.,]/', '', $_POST['preco'] ?? '')));
-    $cliente = mb_strtoupper($_POST['cliente'] ?? '', 'UTF-8');
-    $obra = mb_strtoupper($_POST['obra'] ?? '', 'UTF-8');
-    $nome_produto = mb_strtoupper($_POST['nome_produto'] ?? '', 'UTF-8');
-    $marca = mb_strtoupper($_POST['marca'] ?? '', 'UTF-8');
-    $embalagem = mb_strtoupper($_POST['embalagem'] ?? '', 'UTF-8');
-    $observacao = mb_strtoupper($_POST['observacao'] ?? '', 'UTF-8');
+    $cliente = mb_strtoupper(trim($_POST['cliente'] ?? ''), 'UTF-8');
+    $obra = mb_strtoupper(trim($_POST['obra'] ?? ''), 'UTF-8');
+    $nome_produto = mb_strtoupper(trim($_POST['nome_produto'] ?? ''), 'UTF-8');
+    $marca = mb_strtoupper(trim($_POST['marca'] ?? ''), 'UTF-8');
+    $embalagem = mb_strtoupper(trim($_POST['embalagem'] ?? ''), 'UTF-8');
+    $observacao = mb_strtoupper(trim($_POST['observacao'] ?? ''), 'UTF-8');
 
-    include(__DIR__ . '/../src/controllers/verificar_lote.php');
-
-    // Definicao do codigo da empresa/unidade conforme login ou selecao
-    $empresa = 1; // exemplo fixo
-    $unidade = 1;
-
-    $resultado = verificarLoteMinimoCSV($empresa, $unidade, $formato, $volume);
-
-    if (!$resultado['status']) {
-        echo "<script>alert('{$resultado['mensagem']}'); window.history.back();</script>";
-        exit; //Interrompe o cadastro se o lote for insuficiente
+    // Verifica lote mínimo
+    $loteCheck = verificarLoteMinimoCSV($polo, $tipologia, $formato, $volume, $unidade_medida);
+    if (!$loteCheck['status']) {
+        echo "<script>alert('{$loteCheck['mensagem']}'); window.history.back();</script>";
+        exit;
     }
 
-    $sql = "INSERT INTO formulario(volume,unidade_medida,polo,formato,tipologia,borda,cor,local_uso,data_previsao,preco,cliente,obra,nome_produto,marca,embalagem,observacao)
-    VALUES (:volume, :unidade_medida, :polo, :formato, :tipologia, :borda, :cor, :local_uso, :data_previsao, :preco, :cliente, :obra, :nome_produto, :marca, :embalagem, :observacao)";
+    $sql = "INSERT INTO formulario(
+        volume, unidade_medida, polo, formato, tipologia, borda, cor, local_uso,
+        data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, observacao
+    ) VALUES (
+        :volume, :unidade_medida, :polo, :formato, :tipologia, :borda, :cor, :local_uso,
+        :data_previsao, :preco, :cliente, :obra, :nome_produto, :marca, :embalagem, :observacao
+    )";
 
     try {
-        $stmt = $conexao -> prepare($sql);
-        $stmt -> bindParam(':volume', $volume);
-        $stmt -> bindParam(':unidade_medida', $unidade_medida);
-        $stmt -> bindParam(':polo', $polo);
-        $stmt -> bindParam(':formato', $formato);
-        $stmt -> bindParam(':tipologia', $tipologia);
-        $stmt -> bindParam(':borda', $borda);
-        $stmt -> bindParam(':cor', $cor);
-        $stmt -> bindParam(':local_uso', $local_uso);
-        $stmt -> bindParam(':data_previsao', $data_previsao);
-        $stmt -> bindParam(':preco', $preco);
-        $stmt -> bindParam(':cliente', $cliente);
-        $stmt -> bindParam(':obra', $obra);
-        $stmt -> bindParam(':nome_produto', $nome_produto);
-        $stmt -> bindParam(':marca', $marca);
-        $stmt -> bindParam(':embalagem', $embalagem);
-        $stmt -> bindParam(':observacao', $observacao);
+        $stmt = $conexao->prepare($sql);
+        $stmt->execute([
+            ':volume' => $volume,
+            ':unidade_medida' => $unidade_medida,
+            ':polo' => $polo,
+            ':formato' => $formato,
+            ':tipologia' => $tipologia,
+            ':borda' => $borda,
+            ':cor' => $cor,
+            ':local_uso' => $local_uso,
+            ':data_previsao' => $data_previsao,
+            ':preco' => $preco,
+            ':cliente' => $cliente,
+            ':obra' => $obra,
+            ':nome_produto' => $nome_produto,
+            ':marca' => $marca,
+            ':embalagem' => $embalagem,
+            ':observacao' => $observacao
+        ]);
 
-        if ($stmt -> execute()) {
-            echo "<script>alert('Proposta enviada com sucesso!'); window.location.href = 'proposta_cadastro.php';</script>";
-        } else {
-            echo "<script>alert('Erro ao enviar proposta. Tente novamente.'); window.location.href = 'proposta_cadastro.php';</script>";
-        }
+        echo "<script>alert('Proposta enviada com sucesso!'); window.location.href = 'proposta_cadastro.php';</script>";
     } catch (PDOException $e) {
         echo "Erro ao enviar proposta: " . $e->getMessage();
     }
@@ -253,12 +258,22 @@ if (isset($_POST['botaoEnviar'])) {
 
             <div class="entrada_formulario">
                 <label for="tipologia">Tipologia</label>
-                <input type="text" name="tipologia" placeholder="Ex: Azulejo, Porcelanato GL, etc" required>
+                    <select name="tipologia" required>
+                        <option value="">Selecione...</option>
+                        <option value="PORC GL">PORC GL</option>
+                        <option value="PORC UGL">PORC UGL</option>
+                        <option value="AZULEJO">AZULEJO</option>
+                        <option value="OUTRO">OUTRO</option>
+                    </select>
             </div>
 
             <div class="entrada_formulario">
-                <label for="borda">Borda</label>
-                <input type="text" name="borda" placeholder="Ex: Bold ou Retificado" required>
+                <label for="borda">borda</label>
+                    <select name="borda" required>
+                        <option value="">Selecione...</option>
+                        <option value="RETIFICADO">RETIFICADO</option>
+                        <option value="BOLD">BOLD</option>
+                    </select>
             </div>
 
             <div class="entrada_formulario">
@@ -273,7 +288,7 @@ if (isset($_POST['botaoEnviar'])) {
 
             <div class="entrada_formulario">
                 <label for="data_previsao">Previsão entrega da obra/projeto</label>
-                <input type="date" name="data_previsao" min="<?= date('Y-m-d') ?>" required>
+                <input type="date" name="data_previsao" min="<?php echo date('Y-m-d'); ?>" required>
             </div>
 
             <div class="entrada_formulario">
@@ -298,7 +313,13 @@ if (isset($_POST['botaoEnviar'])) {
 
             <div class="entrada_formulario">
                 <label for="marca">Marca sugerida</label>
-                <input type="text" name="marca" placeholder="Ex: Eliane, Decortiles, Elizabeth, Eliane Floor, etc" required>
+                    <select name="marca" required>
+                        <option value="">Selecione...</option>
+                        <option value="ELIZABETH">ELIZABETH</option>
+                        <option value="ELIANE">ELIANE</option>
+                        <option value="DECORTILES">DECORTILES</option>
+                        <option value="ELIANEFLOOR">ELIANEFLOOR</option>
+                    </select>
             </div>
 
             <div class="entrada_formulario">
