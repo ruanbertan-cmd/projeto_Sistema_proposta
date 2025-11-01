@@ -29,27 +29,33 @@ function verificarLoteMinimoCSV($polo, $tipologia, $formato, $volume, $unidade_m
 
     fgetcsv($handle, 1000, ';'); // Ignora cabeçalho
 
+    $regraDeLoteDeEntrada = false; // Inicializa
+
+    // Variável para rastrear se encontramos a regra de lote mínimo para a tríade
     while (($dados = fgetcsv($handle, 1000, ';')) !== false) {
         $emp = trim($dados[0] ?? '');
         $uni = trim($dados[1] ?? '');
-        $formatoBase = strtoupper(trim($dados[4] ?? ''));
         $tipologiaBase = strtoupper(trim($dados[5] ?? ''));
         $unBase = strtoupper(trim($dados[6] ?? ''));
         $loteMinimo = (float) str_replace(',', '.', trim($dados[9] ?? 0));
 
+        // Checagem apenas das informações Polo, Tipologia e Unidade. Se não tiver no CSV não cadastra
         if (
             identificarUnidade($emp, $uni) === strtoupper($polo) &&
-            strcasecmp($formatoBase, $formato) === 0 &&
             strcasecmp($tipologiaBase, $tipologia) === 0 &&
             ($unidade_medida === null || strcasecmp($unBase, $unidade_medida) === 0)
         ) {
             fclose($handle);
+
+            // Se encontrou a regra, testa o volume
             if ($volume < $loteMinimo) {
                 return [
                     'status' => false,
                     'mensagem' => "⚠️ O volume solicitado ($volume $unBase) é inferior ao lote mínimo ($loteMinimo $unBase) para $formato - $tipologia ($polo)."
                 ];
             }
+
+            // Volume OK, retorna SUCESSO e ENCERRA
             return [
                 'status' => true,
                 'mensagem' => "✅ Volume atende o lote mínimo ($loteMinimo $unBase)."
@@ -57,9 +63,19 @@ function verificarLoteMinimoCSV($polo, $tipologia, $formato, $volume, $unidade_m
         }
     }
 
+    // Se chegou aqui nenhuma função foi encontrada após percorrer todo o CSV
     fclose($handle);
+
+    // Bloqueia se a regra não for encontrada (Polo + Tipologia + Unidade)
+    if ($regraDeLoteDeEntrada === false) {
+        return [
+            'status' => false,
+            'mensagem' => "Regra de Lote Mínimo não encontrada para a combinação Polo **{$polo}**, Tipologia **{$tipologia}** e Unidade **{$unidade_medida}**. Cadastro bloqueado."
+        ];
+    }
+
     return [
         'status' => true,
-        'mensagem' => "✅ Nenhum lote mínimo específico encontrado, volume aceito."
+        'mensagem' => "✅ Validação de lote completa."
     ];
 }
