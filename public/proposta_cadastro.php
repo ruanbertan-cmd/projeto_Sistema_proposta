@@ -294,6 +294,7 @@ if (isset($_POST['botaoEnviar'])) {
             <div class="navbar_container">
                 <ul>
                     <li><a href="proposta_cadastro.php">Cadastro</a></li>
+                    <li><a href="proposta_consulta.php">Consulta</a></li>
                     <li><a href="proposta_fases.php">Fases</a></li>
                 </ul>
             </div>
