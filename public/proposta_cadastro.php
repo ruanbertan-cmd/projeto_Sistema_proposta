@@ -52,13 +52,14 @@ if (isset($_POST['botaoEnviar'])) {
             // --- Inserção no banco ---
             $sql = "INSERT INTO formulario (
                 volume, unidade_medida, polo, formato, tipologia, borda, cor, local_uso,
-                data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, imagem, observacao
+                data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, imagem, observacao, usuario_id
             ) VALUES (
                 :volume, :unidade_medida, :polo, :formato, :tipologia, :borda, :cor, :local_uso,
-                :data_previsao, :preco, :cliente, :obra, :nome_produto, :marca, :embalagem, :imagem, :observacao
+                :data_previsao, :preco, :cliente, :obra, :nome_produto, :marca, :embalagem, :imagem, :observacao, :usuario_id
             )";
 
             $stmt = $conexao->prepare($sql);
+            $usuario_id = $_SESSION['usuario_id'] ?? null;
             $stmt->execute([
                 ':volume' => $volume,
                 ':unidade_medida' => $unidade_medida,
@@ -76,7 +77,8 @@ if (isset($_POST['botaoEnviar'])) {
                 ':marca' => $marca,
                 ':embalagem' => $embalagem,
                 ':imagem' => $imagem_nome,
-                ':observacao' => $observacao
+                ':observacao' => $observacao,
+                ':usuario_id' => $usuario_id
             ]);
 
             $mensagem = 'Proposta enviada com sucesso!';

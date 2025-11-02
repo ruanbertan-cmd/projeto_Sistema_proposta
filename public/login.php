@@ -14,7 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user && password_verify($senha, $user['senha'])) {
+            $_SESSION['usuario_id'] = $user['id'];
             $_SESSION['usuario'] = $user['usuario'];
+
             header('Location: proposta_cadastro.php');
             exit;
         } else {
