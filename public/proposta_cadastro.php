@@ -1,90 +1,88 @@
 <?php
 session_start();
 
-// --- CONFIGURAÇÃO DE ERROS PARA PRODUÇÃO ---
 ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/logs/php_errors.log'); // Crie a pasta 'logs' com permissão de escrita
+ini_set('error_log', __DIR__ . '/logs/php_errors.log');
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
 include(__DIR__ . '/../src/config/conexao.php');
 include(__DIR__ . '/../src/functions/verificar_lote_func.php');
 
+$mensagem = ''; // mensagem do popup
+
 if (isset($_POST['botaoEnviar'])) {
-    // --- Sanitização dos dados ---
-    $volume = floatval(str_replace(',', '.', preg_replace('/[^0-9.,]/', '', $_POST['volume'] ?? '')));
-    $unidade_medida = mb_strtoupper(trim($_POST['unidade_medida'] ?? ''), 'UTF-8');
-    $polo = mb_strtoupper(trim($_POST['polo'] ?? ''), 'UTF-8');
-    $formato = mb_strtoupper(trim($_POST['formato'] ?? ''), 'UTF-8');
-    $tipologia = mb_strtoupper(trim($_POST['tipologia'] ?? ''), 'UTF-8');
-    $borda = mb_strtoupper(trim($_POST['borda'] ?? ''), 'UTF-8');
-    $cor = mb_strtoupper(trim($_POST['cor'] ?? ''), 'UTF-8');
-    $local_uso = mb_strtoupper(trim($_POST['local_uso'] ?? ''), 'UTF-8');
-    $data_previsao = $_POST['data_previsao'] ?? '';
-    $preco = floatval(str_replace(',', '.', preg_replace('/[^0-9.,]/', '', $_POST['preco'] ?? '')));
-    $cliente = mb_strtoupper(trim($_POST['cliente'] ?? ''), 'UTF-8');
-    $obra = mb_strtoupper(trim($_POST['obra'] ?? ''), 'UTF-8');
-    $nome_produto = mb_strtoupper(trim($_POST['nome_produto'] ?? ''), 'UTF-8');
-    $marca = mb_strtoupper(trim($_POST['marca'] ?? ''), 'UTF-8');
-    $embalagem = mb_strtoupper(trim($_POST['embalagem'] ?? ''), 'UTF-8');
-    $observacao = mb_strtoupper(trim($_POST['observacao'] ?? ''), 'UTF-8');
-
-    // --- Upload da imagem ---
-    $imagem_nome = null;
-
-    if (isset($_FILES['imagem']) && $_FILES['imagem']['error'] === UPLOAD_ERR_OK) {
-        $extensao = strtolower(pathinfo($_FILES['imagem']['name'], PATHINFO_EXTENSION));
-        $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
-
-        if (in_array($extensao, $permitidos)) {
-            $pasta = __DIR__ . '/uploads/';
-            if (!is_dir($pasta)) mkdir($pasta, 0777, true);
-            $imagem_nome = uniqid('img_', true) . '.' . $extensao;
-            move_uploaded_file($_FILES['imagem']['tmp_name'], $pasta . $imagem_nome);
-        }
-    }
-
-    // --- Verifica lote mínimo ---
-    $loteCheck = verificarLoteMinimoCSV($polo, $tipologia, $formato, $volume, $unidade_medida);
-    if (!$loteCheck['status']) {
-        echo "<script>window.onload = function(){mostrarPopup('{$loteCheck['mensagem']}');}</script>";
-        exit;
-    }
-
-    // --- Inserção no banco ---
-    $sql = "INSERT INTO formulario (
-        volume, unidade_medida, polo, formato, tipologia, borda, cor, local_uso,
-        data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, imagem, observacao
-    ) VALUES (
-        :volume, :unidade_medida, :polo, :formato, :tipologia, :borda, :cor, :local_uso,
-        :data_previsao, :preco, :cliente, :obra, :nome_produto, :marca, :embalagem, :imagem, :observacao
-    )";
-
     try {
-        $stmt = $conexao->prepare($sql);
-        $stmt->execute([
-            ':volume' => $volume,
-            ':unidade_medida' => $unidade_medida,
-            ':polo' => $polo,
-            ':formato' => $formato,
-            ':tipologia' => $tipologia,
-            ':borda' => $borda,
-            ':cor' => $cor,
-            ':local_uso' => $local_uso,
-            ':data_previsao' => $data_previsao,
-            ':preco' => $preco,
-            ':cliente' => $cliente,
-            ':obra' => $obra,
-            ':nome_produto' => $nome_produto,
-            ':marca' => $marca,
-            ':embalagem' => $embalagem,
-            ':imagem' => $imagem_nome,
-            ':observacao' => $observacao
-        ]);
+        // --- Sanitização dos dados ---
+        $volume = floatval(str_replace(',', '.', preg_replace('/[^0-9.,]/', '', $_POST['volume'] ?? '')));
+        $unidade_medida = mb_strtoupper(trim($_POST['unidade_medida'] ?? ''), 'UTF-8');
+        $polo = mb_strtoupper(trim($_POST['polo'] ?? ''), 'UTF-8');
+        $formato = mb_strtoupper(trim($_POST['formato'] ?? ''), 'UTF-8');
+        $tipologia = mb_strtoupper(trim($_POST['tipologia'] ?? ''), 'UTF-8');
+        $borda = mb_strtoupper(trim($_POST['borda'] ?? ''), 'UTF-8');
+        $cor = mb_strtoupper(trim($_POST['cor'] ?? ''), 'UTF-8');
+        $local_uso = mb_strtoupper(trim($_POST['local_uso'] ?? ''), 'UTF-8');
+        $data_previsao = $_POST['data_previsao'] ?? '';
+        $preco = floatval(str_replace(',', '.', preg_replace('/[^0-9.,]/', '', $_POST['preco'] ?? '')));
+        $cliente = mb_strtoupper(trim($_POST['cliente'] ?? ''), 'UTF-8');
+        $obra = mb_strtoupper(trim($_POST['obra'] ?? ''), 'UTF-8');
+        $nome_produto = mb_strtoupper(trim($_POST['nome_produto'] ?? ''), 'UTF-8');
+        $marca = mb_strtoupper(trim($_POST['marca'] ?? ''), 'UTF-8');
+        $embalagem = mb_strtoupper(trim($_POST['embalagem'] ?? ''), 'UTF-8');
+        $observacao = mb_strtoupper(trim($_POST['observacao'] ?? ''), 'UTF-8');
 
-        echo "<script>window.onload = function(){mostrarPopup('Proposta enviada com sucesso!');}</script>";
+        // --- Verifica lote mínimo antes de subir imagem ---
+        $loteCheck = verificarLoteMinimoCSV($polo, $tipologia, $formato, $volume, $unidade_medida);
+        if (!$loteCheck['status']) {
+            $mensagem = $loteCheck['mensagem'];
+        } else {
+            // --- Upload da imagem ---
+            $imagem_nome = null;
+            if (isset($_FILES['imagem']) && $_FILES['imagem']['error'] === UPLOAD_ERR_OK) {
+                $extensao = strtolower(pathinfo($_FILES['imagem']['name'], PATHINFO_EXTENSION));
+                $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
+                if (in_array($extensao, $permitidos)) {
+                    $pasta = __DIR__ . '/uploads/';
+                    if (!is_dir($pasta)) mkdir($pasta, 0777, true);
+                    $imagem_nome = uniqid('img_', true) . '.' . $extensao;
+                    move_uploaded_file($_FILES['imagem']['tmp_name'], $pasta . $imagem_nome);
+                }
+            }
+
+            // --- Inserção no banco ---
+            $sql = "INSERT INTO formulario (
+                volume, unidade_medida, polo, formato, tipologia, borda, cor, local_uso,
+                data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, imagem, observacao
+            ) VALUES (
+                :volume, :unidade_medida, :polo, :formato, :tipologia, :borda, :cor, :local_uso,
+                :data_previsao, :preco, :cliente, :obra, :nome_produto, :marca, :embalagem, :imagem, :observacao
+            )";
+
+            $stmt = $conexao->prepare($sql);
+            $stmt->execute([
+                ':volume' => $volume,
+                ':unidade_medida' => $unidade_medida,
+                ':polo' => $polo,
+                ':formato' => $formato,
+                ':tipologia' => $tipologia,
+                ':borda' => $borda,
+                ':cor' => $cor,
+                ':local_uso' => $local_uso,
+                ':data_previsao' => $data_previsao,
+                ':preco' => $preco,
+                ':cliente' => $cliente,
+                ':obra' => $obra,
+                ':nome_produto' => $nome_produto,
+                ':marca' => $marca,
+                ':embalagem' => $embalagem,
+                ':imagem' => $imagem_nome,
+                ':observacao' => $observacao
+            ]);
+
+            $mensagem = 'Proposta enviada com sucesso!';
+        }
     } catch (PDOException $e) {
-        echo "<script>window.onload = function(){mostrarPopup('Erro ao enviar proposta: " . addslashes($e->getMessage()) . "');}</script>";
+        $mensagem = 'Erro ao enviar proposta: ' . addslashes($e->getMessage());
     }
 }
 ?>
@@ -443,5 +441,13 @@ if (isset($_POST['botaoEnviar'])) {
             window.location.href = 'proposta_cadastro.php';
         }
     </script>
+    
+        <?php if (!empty($mensagem)): ?>
+    <script>
+        window.onload = function() {
+            mostrarPopup("<?php echo $mensagem; ?>");
+        };
+    </script>
+    <?php endif; ?>
 </body>
 </html>
