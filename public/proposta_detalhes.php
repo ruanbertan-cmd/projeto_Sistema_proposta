@@ -8,7 +8,7 @@ if (!isset($_GET['id'])) {
 
 $id = intval($_GET['id']); // Sanitiza
 
-$stmt = $conexao->query("SELECT id, volume, unidade_medida, polo, formato, tipologia, borda, cor, local_uso, data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, observacao, status, comentario_Lib_Produto 
+$stmt = $conexao->query("SELECT id, volume, unidade_medida, polo, formato, tipologia, borda, cor, local_uso, data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, observacao, imagem, status, comentario_Lib_Produto 
         FROM formulario 
         WHERE id = $id");
 
@@ -104,11 +104,16 @@ $row = $result[0];
         th {
             background-color: #e0e0e0;
             font-weight: 600;
-
         }
 
         tr:last-child td {
             border-bottom: none;
+        }
+
+        td img {
+            max-width: 250px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
         .botoes_acoes {
@@ -160,6 +165,7 @@ $row = $result[0];
                 gap: 10px;
             }
         }
+
         /* ===== Área de Comentário ===== */
         form {
             width: 90%;
@@ -294,6 +300,15 @@ $row = $result[0];
         <tr><th>Marca</th><td><?= htmlspecialchars($row['marca']); ?></td></tr>
         <tr><th>Embalagem</th><td><?= htmlspecialchars($row['embalagem']); ?></td></tr>
         <tr><th>Observação</th><td><?= nl2br(htmlspecialchars($row['observacao'])); ?></td></tr>
+
+        <?php if (!empty($row['imagem'])): ?>
+            <tr>
+                <th>Imagem Referência</th>
+                <td>
+                    <img src="uploads/<?= htmlspecialchars($row['imagem']); ?>" alt="Imagem de referência">
+                </td>
+            </tr>
+        <?php endif; ?>
     </table>
 
     <form method="POST" action="actions.php?action=comentario&id=<?= htmlspecialchars($row['id']) ?>">
