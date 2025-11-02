@@ -11,6 +11,7 @@ include(__DIR__ . '/../src/config/conexao.php');
 include(__DIR__ . '/../src/functions/verificar_lote_func.php');
 
 if (isset($_POST['botaoEnviar'])) {
+    // --- Sanitização dos dados ---
     $volume = floatval(str_replace(',', '.', preg_replace('/[^0-9.,]/', '', $_POST['volume'] ?? '')));
     $unidade_medida = mb_strtoupper(trim($_POST['unidade_medida'] ?? ''), 'UTF-8');
     $polo = mb_strtoupper(trim($_POST['polo'] ?? ''), 'UTF-8');
@@ -28,19 +29,35 @@ if (isset($_POST['botaoEnviar'])) {
     $embalagem = mb_strtoupper(trim($_POST['embalagem'] ?? ''), 'UTF-8');
     $observacao = mb_strtoupper(trim($_POST['observacao'] ?? ''), 'UTF-8');
 
-    // Verifica lote mínimo
+    // --- Upload da imagem ---
+    $imagem_nome = null;
+
+    if (isset($_FILES['imagem']) && $_FILES['imagem']['error'] === UPLOAD_ERR_OK) {
+        $extensao = strtolower(pathinfo($_FILES['imagem']['name'], PATHINFO_EXTENSION));
+        $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
+
+        if (in_array($extensao, $permitidos)) {
+            $pasta = __DIR__ . '/uploads/';
+            if (!is_dir($pasta)) mkdir($pasta, 0777, true);
+            $imagem_nome = uniqid('img_', true) . '.' . $extensao;
+            move_uploaded_file($_FILES['imagem']['tmp_name'], $pasta . $imagem_nome);
+        }
+    }
+
+    // --- Verifica lote mínimo ---
     $loteCheck = verificarLoteMinimoCSV($polo, $tipologia, $formato, $volume, $unidade_medida);
     if (!$loteCheck['status']) {
-        echo "<script>alert('{$loteCheck['mensagem']}'); window.history.back();</script>";
+        echo "<script>window.onload = function(){mostrarPopup('{$loteCheck['mensagem']}');}</script>";
         exit;
     }
 
-    $sql = "INSERT INTO formulario(
+    // --- Inserção no banco ---
+    $sql = "INSERT INTO formulario (
         volume, unidade_medida, polo, formato, tipologia, borda, cor, local_uso,
-        data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, observacao
+        data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, imagem, observacao
     ) VALUES (
         :volume, :unidade_medida, :polo, :formato, :tipologia, :borda, :cor, :local_uso,
-        :data_previsao, :preco, :cliente, :obra, :nome_produto, :marca, :embalagem, :observacao
+        :data_previsao, :preco, :cliente, :obra, :nome_produto, :marca, :embalagem, :imagem, :observacao
     )";
 
     try {
@@ -61,12 +78,13 @@ if (isset($_POST['botaoEnviar'])) {
             ':nome_produto' => $nome_produto,
             ':marca' => $marca,
             ':embalagem' => $embalagem,
+            ':imagem' => $imagem_nome,
             ':observacao' => $observacao
         ]);
 
-        echo "<script>alert('Proposta enviada com sucesso!'); window.location.href = 'proposta_cadastro.php';</script>";
+        echo "<script>window.onload = function(){mostrarPopup('Proposta enviada com sucesso!');}</script>";
     } catch (PDOException $e) {
-        echo "Erro ao enviar proposta: " . $e->getMessage();
+        echo "<script>window.onload = function(){mostrarPopup('Erro ao enviar proposta: " . addslashes($e->getMessage()) . "');}</script>";
     }
 }
 ?>
@@ -170,14 +188,41 @@ if (isset($_POST['botaoEnviar'])) {
             padding: 12px;
             border-radius: 6px;
             border: 1px solid #ccc;
-            font-size: 15px;
-            transition: border 0.2s;
             font-size: 0.8rem;
+            transition: border 0.2s;
         }
 
         input:focus, select:focus {
             border-color: #a9a9a9ff;
             outline: none;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background-color: #fafafa;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.8rem;
+        }
+
+        input[type="file"]:hover {
+            background-color: #f0f0f0;
+        }
+
+        input[type="file"]::-webkit-file-upload-button {
+            background: #9a9a9a;
+            border: none;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        input[type="file"]::-webkit-file-upload-button:hover {
+            background: #626364;
         }
 
         .botao_enviar {
@@ -204,10 +249,42 @@ if (isset($_POST['botaoEnviar'])) {
             transform: scale(0.98);
         }
 
-        @media (max-width: 768px) {
-            form {
-                padding: 30px 25px;
-            }
+        /* ===== POPUP MODERNO ===== */
+        .popup {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0,0,0,0.4);
+            z-index: 9999;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 25px 35px;
+            border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            text-align: center;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .popup-content p {
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        .popup-content button {
+            padding: 8px 20px;
+            background: #9a9a9a;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .popup-content button:hover {
+            background: #626364;
         }
     </style>
 </head>
@@ -224,9 +301,10 @@ if (isset($_POST['botaoEnviar'])) {
     </header>
 
     <main class="main_proposta_cadastro">
-        <form action="proposta_cadastro.php" method="POST">
+        <form action="proposta_cadastro.php" method="POST" enctype="multipart/form-data">
             <h1>Dados para Personalização de Produto</h1>
 
+            <!-- Campos do formulário -->
             <div class="entrada_formulario">
                 <label for="volume">Volume</label>
                 <input type="number" name="volume" step="0.01" placeholder="Ex: 2000, 3000.19 e etc" required>
@@ -258,21 +336,21 @@ if (isset($_POST['botaoEnviar'])) {
 
             <div class="entrada_formulario">
                 <label for="tipologia">Tipologia</label>
-                    <select name="tipologia" required>
-                        <option value="">Selecione...</option>
-                        <option value="PORC GL">Porc GL</option>
-                        <option value="PORC UGL">Porc UGL</option>
-                        <option value="AZULEJO">Azulejo</option>
-                    </select>
+                <select name="tipologia" required>
+                    <option value="">Selecione...</option>
+                    <option value="PORC GL">Porc GL</option>
+                    <option value="PORC UGL">Porc UGL</option>
+                    <option value="AZULEJO">Azulejo</option>
+                </select>
             </div>
 
             <div class="entrada_formulario">
                 <label for="borda">Borda</label>
-                    <select name="borda" required>
-                        <option value="">Selecione...</option>
-                        <option value="RETIFICADO">Retificado</option>
-                        <option value="BOLD">Bold</option>
-                    </select>
+                <select name="borda" required>
+                    <option value="">Selecione...</option>
+                    <option value="RETIFICADO">Retificado</option>
+                    <option value="BOLD">Bold</option>
+                </select>
             </div>
 
             <div class="entrada_formulario">
@@ -307,27 +385,32 @@ if (isset($_POST['botaoEnviar'])) {
 
             <div class="entrada_formulario">
                 <label for="nome_produto">Sugestão nome do produto</label>
-                <input type="text" name="nome_produto" placeholder="Ex: Marmore Branco Ac 120x120, Vila Dourada Ext 90x90, etc">
+                <input type="text" name="nome_produto" placeholder="Ex: Mármore Branco 120x120, Vila Dourada 90x90, etc">
             </div>
 
             <div class="entrada_formulario">
                 <label for="marca">Marca sugerida</label>
-                    <select name="marca" required>
-                        <option value="">Selecione...</option>
-                        <option value="ELIANE">Eliane</option>
-                        <option value="DECORTILES">Decortiles</option>
-                        <option value="ELIZABETH">Elizabeth</option>
-                        <option value="ELIANEFLOOR">Elianefloor</option>
-                    </select>
+                <select name="marca" required>
+                    <option value="">Selecione...</option>
+                    <option value="ELIANE">Eliane</option>
+                    <option value="DECORTILES">Decortiles</option>
+                    <option value="ELIZABETH">Elizabeth</option>
+                    <option value="ELIANEFLOOR">Elianefloor</option>
+                </select>
             </div>
 
             <div class="entrada_formulario">
                 <label for="embalagem">Embalagem especial</label>
-                    <select name="embalagem" required>
-                        <option value="">Selecione...</option>
-                        <option value="SIM">Sim</option>
-                        <option value="NAO">Não</option>
-                    </select>
+                <select name="embalagem" required>
+                    <option value="">Selecione...</option>
+                    <option value="SIM">Sim</option>
+                    <option value="NAO">Não</option>
+                </select>
+            </div>
+
+            <div class="entrada_formulario">
+                <label for="imagem">Enviar imagem referência (Opcional)</label>
+                <input name="imagem" type="file" accept="image/*">
             </div>
 
             <div class="entrada_formulario">
@@ -340,5 +423,25 @@ if (isset($_POST['botaoEnviar'])) {
             </div>
         </form>
     </main>
+
+    <!-- Popup moderno -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <p id="popup-message"></p>
+            <button onclick="fecharPopup()">OK</button>
+        </div>
+    </div>
+
+    <script>
+        function mostrarPopup(mensagem) {
+            document.getElementById('popup-message').innerText = mensagem;
+            document.getElementById('popup').style.display = 'flex';
+        }
+
+        function fecharPopup() {
+            document.getElementById('popup').style.display = 'none';
+            window.location.href = 'proposta_cadastro.php';
+        }
+    </script>
 </body>
 </html>
