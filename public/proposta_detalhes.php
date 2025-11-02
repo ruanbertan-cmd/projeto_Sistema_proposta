@@ -324,8 +324,8 @@ $row = $result[0];
     <?php 
         $status = $row['status'];
         $color = '#333';
-        if(str_starts_with($status,'Aprovado')) $color = '#62f68cff';
-        elseif(str_starts_with($status,'Rejeitado')) $color = '#f95a5aff';
+        if(str_starts_with($status,'Aprovado')) $color = 'green';
+        elseif(str_starts_with($status,'Rejeitado')) $color = 'red';
     ?>
     <p class="status_box" style="background-color: <?= $color ?>;">Status: <?= htmlspecialchars($status) ?></p>
 

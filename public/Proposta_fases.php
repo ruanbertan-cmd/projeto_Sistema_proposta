@@ -13,6 +13,8 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fases das Propostas</title>
+<!-- SweetAlert2 CSS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
     /* ===== Reset ===== */
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
@@ -68,7 +70,6 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         overflow-x: auto;
         padding: 20px;
         animation: fadeIn 0.8s ease-in-out;
-        
     }
 
     @keyframes fadeIn {
@@ -115,18 +116,16 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         transition: 0.2s;
     }
 
-    a.aprovar { background-color: #9a9a9a; }
-    a.aprovar:hover { background-color: #626364; }
+    a.aprovar { background-color: #848484ff; }
+    a.aprovar:hover { background-color: #656565ff; }
 
-    a.rejeitar { background-color: #777; }
-    a.rejeitar:hover { background-color: #555; }
+    a.rejeitar { background-color: #aeadadff; }
+    a.rejeitar:hover { background-color: #a1a1a1ff; }
 
-    a.detalhes { background-color: #666; }
-    a.detalhes:hover { background-color: #555; }
+    a.detalhes { background-color: #aeadadff; }
+    a.detalhes:hover { background-color: #a1a1a1ff; }
 
     strong { font-weight: bold; }
-    .status-aprovado { color: '#62f68cff'; }
-    .status-rejeitado { color: '#f95a5aff'; }
 
     @media (max-width: 768px) {
         .tabela_container { padding: 15px; }
@@ -177,10 +176,8 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td><a href="proposta_detalhes.php?id=<?= $row['id'] ?>" class="detalhes">Ver Detalhes</a></td>
                     <td>
                         <?php if ($row['status'] === 'Em analise'): ?>
-                            <a href="actions.php?action=aprovar&id=<?= htmlspecialchars($row['id']) ?>" class="aprovar"
-                               onclick="return confirm('Tem certeza que deseja aprovar esta proposta?');">Aprovar</a>
-                            <a href="actions.php?action=rejeitar&id=<?= htmlspecialchars($row['id']) ?>"  class="rejeitar"
-                               onclick="return confirm('Tem certeza que deseja rejeitar esta proposta?');">Rejeitar</a>
+                            <a href="#" class="aprovar" onclick="confirmAction('aprovar', <?= $row['id'] ?>)">Aprovar</a>
+                            <a href="#" class="rejeitar" onclick="confirmAction('rejeitar', <?= $row['id'] ?>)">Rejeitar</a>
                         <?php else: ?>
                         <?php
                             $status = $row['status'];
@@ -205,6 +202,27 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </table>
     </div>
 </main>
+
+<script>
+function confirmAction(action, id) {
+    let actionText = action === 'aprovar' ? 'aprovar' : 'rejeitar';
+    let actionColor = action === 'aprovar' ? '#828282ff' : '#d1d1d1ff';
+
+    Swal.fire({
+        title: `Tem certeza que deseja ${actionText} esta proposta?`,
+        icon: action === 'aprovar' ? 'success' : 'error',
+        showCancelButton: true,
+        confirmButtonColor: actionColor,
+        cancelButtonColor: '#777',
+        confirmButtonText: `Sim, ${actionText}`,
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = `actions.php?action=${action}&id=${id}`;
+        }
+    });
+}
+</script>
 
 </body>
 </html>
