@@ -70,7 +70,7 @@ function verificarLoteMinimoCSV($polo, $tipologia, $formato, $volume, $unidade_m
     if ($regraDeLoteDeEntrada === false) {
         return [
             'status' => false,
-            'mensagem' => "Regra de Lote Mínimo não encontrada para a combinação Polo **{$polo}**, Tipologia **{$tipologia}** e Unidade **{$unidade_medida}**. Cadastro bloqueado."
+            'mensagem' => "Produção inviável, não conseguimos realizar a produção no Polo ($polo), Tipologia ($tipologia) e Unidade ($unidade_medida). Cadastro bloqueado."
         ];
     }
 
