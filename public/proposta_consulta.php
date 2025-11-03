@@ -13,6 +13,7 @@ $usuario_id = $_SESSION['usuario_id'];
 // Consulta propostas do usuário logado
 $stmt = $conexao->prepare("
     SELECT 
+        id,
         nome_produto, 
         data_previsao, 
         comentario_Lib_Produto, 
@@ -131,6 +132,20 @@ $propostas = $stmt->fetchAll(PDO::FETCH_ASSOC);
         color: white;
         font-weight: 600;
     }
+    
+    a.detalhes {
+    background-color: #666;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.2s;
+    }
+
+    a.detalhes:hover {
+        background-color: #4caf50;
+    }
 
     table.tabela_propostas tr:nth-child(even) { background-color: #f5f5f5; }
     table.tabela_propostas tr:hover { background-color: #e0e0e0; }
@@ -173,6 +188,7 @@ $propostas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <th>Data de Previsão</th>
                 <th>Comentário Coord. Novos Produtos</th>
                 <th>Status</th>
+                <th>Dados Completos</th>
             </tr>
             <?php foreach ($propostas as $p): ?>
             <?php
@@ -186,6 +202,7 @@ $propostas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <td><?= !empty($p['data_previsao']) ? date('d/m/Y', strtotime($p['data_previsao'])) : '-' ?></td>
                 <td><?= htmlspecialchars($p['comentario_Lib_Produto'] ?? '-') ?></td>
                 <td class="<?= $statusClass ?>"><?= htmlspecialchars($status ?: 'Em análise') ?></td>
+                <td><a href="proposta_detalhes.php?id=<?= $p['id'] ?>" class="detalhes">Ver Detalhes</a></td>
             </tr>
             <?php endforeach; ?>
         </table>
