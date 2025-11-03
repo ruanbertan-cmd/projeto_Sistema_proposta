@@ -8,18 +8,53 @@ if (!isset($_GET['id'])) {
 
 $id = intval($_GET['id']); // Sanitiza
 
-$stmt = $conexao->prepare("SELECT id, volume, unidade_medida, polo, formato, tipologia, borda, cor, local_uso, data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, observacao, imagem, status, comentario_Lib_Produto 
-        FROM formulario 
-        WHERE id = ?");
+// Busca os dados da proposta
+$stmt = $conexao->prepare("
+    SELECT id, volume, unidade_medida, polo, formato, tipologia, borda, cor, local_uso, 
+           data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, observacao, 
+           imagem, status
+    FROM formulario 
+    WHERE id = ?
+");
+$stmt->execute([$id]);
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$stmt -> execute([$id]);
-$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-if (count($result) == 0) {
+if (!$row) {
     die("Nenhuma proposta encontrada para o ID informado.");
 }
-$row = $result[0];
+
+// === Inserir novo comentário ===
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comentario_novo'])) {
+    $comentario = trim($_POST['comentario_novo']);
+
+    if ($comentario !== '') {
+        $usuario_id = $_SESSION['usuario_id'] ?? null;
+        $formulario_id = $row['id'];
+
+        $stmtInsert = $conexao->prepare("
+            INSERT INTO comentarios (formulario_id, usuario_id, comentario)
+            VALUES (?, ?, ?)
+        ");
+        $stmtInsert->execute([$formulario_id, $usuario_id, $comentario]);
+
+        // Redireciona para evitar reenvio do formulário
+        header("Location: proposta_detalhes.php?id=" . $id . "&origem=" . ($_GET['origem'] ?? ''));
+        exit;
+    }
+}
+
+// === Busca comentários existentes ===
+$stmtComentarios = $conexao->prepare("
+    SELECT c.comentario, c.data_hora, usuario AS usuario
+    FROM comentarios c
+    LEFT JOIN usuario u ON c.usuario_id = u.id
+    WHERE c.formulario_id = ?
+    ORDER BY c.data_hora DESC
+");
+$stmtComentarios->execute([$row['id']]);
+$comentarios = $stmtComentarios->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -272,74 +307,82 @@ $row = $result[0];
 <body>
 
 <header class="barra_navegacao">
-    <nav class="navbar">
-        <div class="navbar_container">
-            <ul>
-                <li><a href="proposta_cadastro.php">Cadastro</a></li>
-                <li><a href="proposta_consulta.php">Consulta</a></li>
-                <li><a href="proposta_fases.php">Fases</a></li>
-            </ul>
-        </div>
-    </nav>
+<nav class="navbar">
+<div class="navbar_container">
+    <ul>
+        <li><a href="proposta_cadastro.php">Cadastro</a></li>
+        <li><a href="proposta_consulta.php">Consulta</a></li>
+        <li><a href="proposta_fases.php">Fases</a></li>
+    </ul>
+</div>
+</nav>
 </header>
 
 <main class="main_proposta_detalhes">
-    <h1>Detalhes da Proposta</h1>
+<h1>Detalhes da Proposta</h1>
 
-    <table>
-        <tr><th>Volume</th><td><?= htmlspecialchars($row['volume'] . ' ' . $row['unidade_medida']); ?></td></tr>
-        <tr><th>Formato</th><td><?= htmlspecialchars($row['formato']); ?></td></tr>
-        <tr><th>Polo</th><td><?= htmlspecialchars($row['polo']); ?></td></tr>
-        <tr><th>Tipologia</th><td><?= htmlspecialchars($row['tipologia']); ?></td></tr>
-        <tr><th>Borda</th><td><?= htmlspecialchars($row['borda']); ?></td></tr>
-        <tr><th>Cor</th><td><?= htmlspecialchars($row['cor']); ?></td></tr>
-        <tr><th>Local de Uso</th><td><?= htmlspecialchars($row['local_uso']); ?></td></tr>
-        <tr><th>Data Previsão</th><td><?= htmlspecialchars(date('d/m/Y', strtotime($row['data_previsao']))); ?></td></tr>
-        <tr><th>Preço</th><td><?= htmlspecialchars($row['preco']); ?></td></tr>
-        <tr><th>Cliente</th><td><?= htmlspecialchars($row['cliente']); ?></td></tr>
-        <tr><th>Obra</th><td><?= htmlspecialchars($row['obra']); ?></td></tr>
-        <tr><th>Nome Produto</th><td><?= htmlspecialchars($row['nome_produto']); ?></td></tr>
-        <tr><th>Marca</th><td><?= htmlspecialchars($row['marca']); ?></td></tr>
-        <tr><th>Embalagem</th><td><?= htmlspecialchars($row['embalagem']); ?></td></tr>
-        <tr><th>Observação</th><td><?= nl2br(htmlspecialchars($row['observacao'])); ?></td></tr>
+<table>
+<tr><th>Volume</th><td><?= htmlspecialchars($row['volume'] . ' ' . $row['unidade_medida']); ?></td></tr>
+<tr><th>Formato</th><td><?= htmlspecialchars($row['formato']); ?></td></tr>
+<tr><th>Polo</th><td><?= htmlspecialchars($row['polo']); ?></td></tr>
+<tr><th>Tipologia</th><td><?= htmlspecialchars($row['tipologia']); ?></td></tr>
+<tr><th>Borda</th><td><?= htmlspecialchars($row['borda']); ?></td></tr>
+<tr><th>Cor</th><td><?= htmlspecialchars($row['cor']); ?></td></tr>
+<tr><th>Local de Uso</th><td><?= htmlspecialchars($row['local_uso']); ?></td></tr>
+<tr><th>Data Previsão</th><td><?= htmlspecialchars(date('d/m/Y', strtotime($row['data_previsao']))); ?></td></tr>
+<tr><th>Preço</th><td><?= htmlspecialchars($row['preco']); ?></td></tr>
+<tr><th>Cliente</th><td><?= htmlspecialchars($row['cliente']); ?></td></tr>
+<tr><th>Obra</th><td><?= htmlspecialchars($row['obra']); ?></td></tr>
+<tr><th>Nome Produto</th><td><?= htmlspecialchars($row['nome_produto']); ?></td></tr>
+<tr><th>Marca</th><td><?= htmlspecialchars($row['marca']); ?></td></tr>
+<tr><th>Embalagem</th><td><?= htmlspecialchars($row['embalagem']); ?></td></tr>
+<?php if (!empty($row['imagem'])): ?>
+<tr>
+<th>Imagem Referência</th>
+<td><img src="uploads/<?= htmlspecialchars($row['imagem']); ?>" alt="Imagem de referência"></td>
+</tr>
+<?php endif; ?>
+</table>
 
-        <?php if (!empty($row['imagem'])): ?>
-            <tr>
-                <th>Imagem Referência</th>
-                <td>
-                    <img src="uploads/<?= htmlspecialchars($row['imagem']); ?>" alt="Imagem de referência">
-                </td>
-            </tr>
-        <?php endif; ?>
-    </table>
+<!-- Formulário para adicionar comentário -->
+<form method="POST">
+<textarea name="comentario_novo" placeholder="Escreva um comentário..." required></textarea>
+<button type="submit">Salvar comentário</button>
+</form>
 
-    <form method="POST" action="actions.php?action=comentario&id=<?= htmlspecialchars($row['id']) ?>">
-        <textarea name="comentario_Lib_Produto" placeholder="Escreva um comentário..." required></textarea>
-        <button type="submit">Salvar comentário</button>
-    </form>
+<!-- Comentários existentes -->
+<div class="comentario-container">
+<strong>Comentários:</strong>
+<?php if (count($comentarios) > 0): ?>
+    <?php foreach ($comentarios as $c): ?>
+        <div style="margin-top:10px; border-top:1px solid #ddd; padding-top:8px;">
+            <small><strong><?= htmlspecialchars($c['usuario'] ?? 'Usuário') ?></strong> - <?= date('d/m/Y H:i', strtotime($c['data_hora'])) ?></small>
+            <p class="comentario-text"><?= nl2br(htmlspecialchars($c['comentario'])) ?></p>
+        </div>
+    <?php endforeach; ?>
+<?php else: ?>
+    <p class="comentario-text">Nenhum comentário ainda.</p>
+<?php endif; ?>
+</div>
 
-    <div class="comentario-container">
-        <strong>Comentário:</strong>
-        <p class="comentario-text"><?= htmlspecialchars($row['comentario_Lib_Produto'] ?? 'Nenhum comentário ainda.') ?></p>
-    </div>
+<!-- Status -->
+<?php 
+$status = $row['status'];
+$color = '#333';
+if(str_starts_with($status,'Aprovado')) $color = 'green';
+elseif(str_starts_with($status,'Rejeitado')) $color = 'red';
+?>
+<p class="status_box" style="background-color: <?= $color ?>;">Status: <?= htmlspecialchars($status) ?></p>
 
-    <?php 
-        $status = $row['status'];
-        $color = '#333';
-        if(str_starts_with($status,'Aprovado')) $color = 'green';
-        elseif(str_starts_with($status,'Rejeitado')) $color = 'red';
-    ?>
-    <p class="status_box" style="background-color: <?= $color ?>;">Status: <?= htmlspecialchars($status) ?></p>
+<!-- Botão voltar -->
+<?php
+$origem = $_GET['origem'] ?? null;
+$voltar_para = $origem
+    ? ($origem === 'fases' ? 'proposta_fases.php' : 'proposta_consulta.php')
+    : ($_SERVER['HTTP_REFERER'] ?? 'proposta_consulta.php');
+?>
+<a href="<?= htmlspecialchars($voltar_para) ?>" class="voltar">Voltar</a>
 
-    <br>
-    <?php
-        $origem = $_GET['origem'] ?? null;
-        $voltar_para = $origem
-            ? ($origem === 'fases' ? 'proposta_fases.php' : 'proposta_consulta.php')
-            : ($_SERVER['HTTP_REFERER'] ?? 'proposta_consulta.php');
-        ?>
-    <a href="<?= htmlspecialchars($voltar_para) ?>" class="voltar">← Voltar</a>
 </main>
-
 </body>
 </html>

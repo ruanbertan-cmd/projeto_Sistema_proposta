@@ -13,18 +13,28 @@ $usuario_id = $_SESSION['usuario_id'];
 // Consulta propostas do usuário logado
 $stmt = $conexao->prepare("
     SELECT 
-        id,
-        nome_produto, 
-        data_previsao, 
-        comentario_Lib_Produto, 
-        status 
-    FROM formulario 
-    WHERE usuario_id = ? 
-    ORDER BY id DESC
+        f.id,
+        f.nome_produto, 
+        f.data_previsao, 
+        f.status,
+        c.comentario AS ultimo_comentario
+    FROM formulario f
+    LEFT JOIN (
+        SELECT c1.formulario_id, c1.comentario
+        FROM comentarios c1
+        INNER JOIN (
+            SELECT formulario_id, MAX(data_hora) AS max_data
+            FROM comentarios
+            GROUP BY formulario_id
+        ) c2 ON c1.formulario_id = c2.formulario_id AND c1.data_hora = c2.max_data
+    ) c ON f.id = c.formulario_id
+    WHERE f.usuario_id = ?
+    ORDER BY f.id DESC
 ");
 $stmt->execute([$usuario_id]);
 $propostas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -134,7 +144,6 @@ $propostas = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     a.detalhes {
-    background-color: #666;
     color: white;
     padding: 6px 12px;
     border-radius: 6px;
@@ -143,9 +152,8 @@ $propostas = $stmt->fetchAll(PDO::FETCH_ASSOC);
     transition: 0.2s;
     }
 
-    a.detalhes:hover {
-        background-color: #4caf50;
-    }
+    a.detalhes { background-color: #aeadadff; }
+    a.detalhes:hover { background-color: #a1a1a1ff; }
 
     table.tabela_propostas tr:nth-child(even) { background-color: #f5f5f5; }
     table.tabela_propostas tr:hover { background-color: #e0e0e0; }
@@ -166,58 +174,58 @@ $propostas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
 
 <header class="barra_navegacao">
-    <nav class="navbar">
-        <div class="navbar_container">
-            <ul>
-                <li><a href="proposta_cadastro.php">Cadastro</a></li>
-                <li><a href="proposta_consulta.php">Consulta</a></li>
-                <li><a href="proposta_fases.php">Fases</a></li>
-            </ul>
-        </div>
-    </nav>
+<nav class="navbar">
+<div class="navbar_container">
+    <ul>
+        <li><a href="proposta_cadastro.php">Cadastro</a></li>
+        <li><a href="proposta_consulta.php">Consulta</a></li>
+        <li><a href="proposta_fases.php">Fases</a></li>
+    </ul>
+</div>
+</nav>
 </header>
 
 <main class="main_proposta_consulta">
-    <div class="tabela_container">
-        <h1>Minhas Propostas</h1>
+<div class="tabela_container">
+    <h1>Minhas Propostas</h1>
 
-        <?php if (count($propostas) > 0): ?>
-        <table class="tabela_propostas">
-            <tr>
-                <th>Produto</th>
-                <th>Data de Previsão</th>
-                <th>Comentário Coord. Novos Produtos</th>
-                <th>Status</th>
-                <th>Dados Completos</th>
-            </tr>
-            <?php foreach ($propostas as $p): ?>
-            <?php
-                $status = trim($p['status']);
-                $statusClass =
-                    str_starts_with($status, 'Aprovado') ? 'status-aprovado' :
-                    (str_starts_with($status, 'Rejeitado') ? 'status-rejeitado' : 'status-analise');
-            ?>
-            <tr>
-                <td><?= htmlspecialchars($p['nome_produto']) ?></td>
-                <td><?= !empty($p['data_previsao']) ? date('d/m/Y', strtotime($p['data_previsao'])) : '-' ?></td>
-                <td><?= htmlspecialchars($p['comentario_Lib_Produto'] ?? '-') ?></td>
-                <td class="<?= $statusClass ?>"><?= htmlspecialchars($status ?: 'Em análise') ?></td>
-                <td><a href="proposta_detalhes.php?id=<?= $p['id'] ?>&origem=consulta" class="detalhes">Ver Detalhes</a></td>
-            </tr>
-            <?php endforeach; ?>
-        </table>
-        <?php else: ?>
-            <script>
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Nenhuma proposta encontrada',
-                    text: 'Você ainda não cadastrou nenhuma proposta.',
-                    confirmButtonColor: '#9a9a9a',
-                    confirmButtonText: 'Entendi'
-                });
-            </script>
-        <?php endif; ?>
-    </div>
+    <?php if (count($propostas) > 0): ?>
+    <table class="tabela_propostas">
+        <tr>
+            <th>Produto</th>
+            <th>Data de Previsão</th>
+            <th>Último Comentário</th>
+            <th>Status</th>
+            <th>Dados Completos</th>
+        </tr>
+        <?php foreach ($propostas as $p): ?>
+        <?php
+            $status = trim($p['status']);
+            $statusClass =
+                str_starts_with($status, 'Aprovado') ? 'status-aprovado' :
+                (str_starts_with($status, 'Rejeitado') ? 'status-rejeitado' : 'status-analise');
+        ?>
+        <tr>
+            <td><?= htmlspecialchars($p['nome_produto']) ?></td>
+            <td><?= !empty($p['data_previsao']) ? date('d/m/Y', strtotime($p['data_previsao'])) : '-' ?></td>
+            <td><?= htmlspecialchars($p['ultimo_comentario'] ?? '-') ?></td>
+            <td class="<?= $statusClass ?>"><?= htmlspecialchars($status ?: 'Em análise') ?></td>
+            <td><a href="proposta_detalhes.php?id=<?= $p['id'] ?>&origem=consulta" class="detalhes">Ver Detalhes</a></td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+    <?php else: ?>
+        <script>
+            Swal.fire({
+                icon: 'info',
+                title: 'Nenhuma proposta encontrada',
+                text: 'Você ainda não cadastrou nenhuma proposta.',
+                confirmButtonColor: '#9a9a9a',
+                confirmButtonText: 'Entendi'
+            });
+        </script>
+    <?php endif; ?>
+</div>
 </main>
 
 </body>
