@@ -8,10 +8,11 @@ if (!isset($_GET['id'])) {
 
 $id = intval($_GET['id']); // Sanitiza
 
-$stmt = $conexao->query("SELECT id, volume, unidade_medida, polo, formato, tipologia, borda, cor, local_uso, data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, observacao, imagem, status, comentario_Lib_Produto 
+$stmt = $conexao->prepare("SELECT id, volume, unidade_medida, polo, formato, tipologia, borda, cor, local_uso, data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, observacao, imagem, status, comentario_Lib_Produto 
         FROM formulario 
-        WHERE id = $id");
+        WHERE id = ?");
 
+$stmt -> execute([$id]);
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if (count($result) == 0) {
@@ -331,7 +332,13 @@ $row = $result[0];
     <p class="status_box" style="background-color: <?= $color ?>;">Status: <?= htmlspecialchars($status) ?></p>
 
     <br>
-    <a class="voltar" href="proposta_fases.php">Voltar</a>
+    <?php
+        $origem = $_GET['origem'] ?? null;
+        $voltar_para = $origem
+            ? ($origem === 'fases' ? 'proposta_fases.php' : 'proposta_consulta.php')
+            : ($_SERVER['HTTP_REFERER'] ?? 'proposta_consulta.php');
+        ?>
+    <a href="<?= htmlspecialchars($voltar_para) ?>" class="voltar">← Voltar</a>
 </main>
 
 </body>

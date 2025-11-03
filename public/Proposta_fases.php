@@ -174,7 +174,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td><?= htmlspecialchars(date('d/m/Y', strtotime($row['data_previsao']))) ?></td>
                     <td><?= htmlspecialchars($row['nome_produto']) ?></td>
                     <td><?= htmlspecialchars($row['marca']) ?></td>
-                    <td><a href="proposta_detalhes.php?id=<?= $row['id'] ?>" class="detalhes">Ver Detalhes</a></td>
+                    <td><a href="proposta_detalhes.php?id=<?= $row['id'] ?>&origem=fases" class="detalhes">Ver Detalhes</a></td>
                     <td>
                         <?php if ($row['status'] === 'Em analise'): ?>
                             <a href="#" class="aprovar" onclick="confirmAction('aprovar', <?= $row['id'] ?>)">Aprovar</a>

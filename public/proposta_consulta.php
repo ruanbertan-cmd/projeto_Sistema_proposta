@@ -132,7 +132,7 @@ $propostas = $stmt->fetchAll(PDO::FETCH_ASSOC);
         color: white;
         font-weight: 600;
     }
-    
+
     a.detalhes {
     background-color: #666;
     color: white;
@@ -202,7 +202,7 @@ $propostas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <td><?= !empty($p['data_previsao']) ? date('d/m/Y', strtotime($p['data_previsao'])) : '-' ?></td>
                 <td><?= htmlspecialchars($p['comentario_Lib_Produto'] ?? '-') ?></td>
                 <td class="<?= $statusClass ?>"><?= htmlspecialchars($status ?: 'Em análise') ?></td>
-                <td><a href="proposta_detalhes.php?id=<?= $p['id'] ?>" class="detalhes">Ver Detalhes</a></td>
+                <td><a href="proposta_detalhes.php?id=<?= $p['id'] ?>&origem=consulta" class="detalhes">Ver Detalhes</a></td>
             </tr>
             <?php endforeach; ?>
         </table>
