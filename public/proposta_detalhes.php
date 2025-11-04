@@ -47,9 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comentario_novo'])) {
         ");
         $stmtInsert->execute([$formulario_id, $usuario_id, $comentario]);
 
-        // Redireciona com flag "novo=1" para scroll e sino
-        header("Location: proposta_detalhes.php?id={$id}&origem=" . ($_GET['origem'] ?? '') . "&novo=1#ultimo-comentario");
-        exit;
+        // Redireciona com flag "novo=1" para sino
+        header("Location: proposta_detalhes.php?id={$id}&origem=" . ($_GET['origem'] ?? '') . "&novo=1");
     }
 }
 
@@ -485,7 +484,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (novoComentario === "1") {
         const ultimo = document.querySelector("#ultimo-comentario");
         if (ultimo) {
-            ultimo.scrollIntoView({ behavior: "smooth", block: "center" });
 
             // Mostra o sino por 3 segundos
             const sino = ultimo.querySelector(".sino-animado");
@@ -494,11 +492,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // Remove o parâmetro da URL
+        // Remove o parâmetro da URL (mantém limpo)
         const novaURL = window.location.href.replace(/(&|\?)novo=1/, "");
         window.history.replaceState({}, document.title, novaURL);
     }
 });
 </script>
+
 </body>
 </html>
