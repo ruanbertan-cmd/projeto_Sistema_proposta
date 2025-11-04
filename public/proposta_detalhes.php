@@ -2,13 +2,24 @@
 session_start();
 include(__DIR__ . '/../src/config/conexao.php');
 
-if (!isset($_GET['id'])) {
-    die("ID não informado.");
+// 🕒 Corrige definitivamente o fuso horário
+date_default_timezone_set('America/Sao_Paulo');
+$conexao->exec("SET time_zone = '-03:00'");
+
+// 🔒 Garantir que o usuário está logado
+$usuario_id = $_SESSION['usuario_id'] ?? null;
+if (!$usuario_id) {
+    header('Location: login.php');
+    exit;
 }
 
-$id = intval($_GET['id']); // Sanitiza
+// === Sanitiza o ID da proposta ===
+$id = intval($_GET['id'] ?? 0);
+if ($id <= 0) {
+    die("ID inválido.");
+}
 
-// Busca os dados da proposta
+// === Busca dados da proposta ===
 $stmt = $conexao->prepare("
     SELECT id, volume, unidade_medida, polo, formato, tipologia, borda, cor, local_uso, 
            data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, observacao, 
@@ -23,37 +34,76 @@ if (!$row) {
     die("Nenhuma proposta encontrada para o ID informado.");
 }
 
+$formulario_id = $row['id'];
+
 // === Inserir novo comentário ===
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comentario_novo'])) {
     $comentario = trim($_POST['comentario_novo']);
 
     if ($comentario !== '') {
-        $usuario_id = $_SESSION['usuario_id'] ?? null;
-        $formulario_id = $row['id'];
-
         $stmtInsert = $conexao->prepare("
-            INSERT INTO comentarios (formulario_id, usuario_id, comentario)
-            VALUES (?, ?, ?)
+            INSERT INTO comentarios (formulario_id, usuario_id, comentario, data_hora)
+            VALUES (?, ?, ?, NOW())
         ");
         $stmtInsert->execute([$formulario_id, $usuario_id, $comentario]);
 
-        // Redireciona para evitar reenvio do formulário
-        header("Location: proposta_detalhes.php?id=" . $id . "&origem=" . ($_GET['origem'] ?? ''));
+        // Redireciona com flag "novo=1" para scroll automático
+        header("Location: proposta_detalhes.php?id={$id}&origem=" . ($_GET['origem'] ?? '') . "&novo=1#ultimo-comentario");
         exit;
     }
 }
 
-// === Busca comentários existentes ===
-$stmtComentarios = $conexao->prepare("
-    SELECT c.comentario, c.data_hora, usuario AS usuario
+// === Marcar comentários como visualizados pelo usuário ===
+$stmtMarcar = $conexao->prepare("
+    INSERT INTO comentarios_visualizacao (comentario_id, usuario_id)
+    SELECT c.id, :usuario_id
     FROM comentarios c
-    LEFT JOIN usuario u ON c.usuario_id = u.id
-    WHERE c.formulario_id = ?
-    ORDER BY c.data_hora DESC
+    LEFT JOIN comentarios_visualizacao cv 
+        ON cv.comentario_id = c.id AND cv.usuario_id = :usuario_id
+    WHERE c.formulario_id = :formulario_id
+      AND cv.id IS NULL
 ");
-$stmtComentarios->execute([$row['id']]);
+$stmtMarcar->execute([
+    ':usuario_id' => $usuario_id,
+    ':formulario_id' => $formulario_id
+]);
+
+
+// === Carregar comentários ===
+$stmtComentarios = $conexao->prepare("
+    SELECT 
+        c.id,
+        c.comentario,
+        c.data_hora AS data_hora_br,
+        u.usuario AS autor,
+        CASE 
+            WHEN cv.id IS NULL AND c.usuario_id != ? THEN 1
+            ELSE 0
+        END AS novo
+    FROM comentarios c
+    LEFT JOIN usuario u ON u.id = c.usuario_id
+    LEFT JOIN comentarios_visualizacao cv 
+        ON cv.comentario_id = c.id AND cv.usuario_id = ?
+    WHERE c.formulario_id = ?
+    ORDER BY c.data_hora ASC
+");
+$stmtComentarios->execute([$usuario_id, $usuario_id, $formulario_id]);
 $comentarios = $stmtComentarios->fetchAll(PDO::FETCH_ASSOC);
+
+// === Marcar comentários como lidos (somente os que ainda não foram vistos) ===
+$stmtLidos = $conexao->prepare("
+    INSERT IGNORE INTO comentarios_visualizacao (comentario_id, usuario_id)
+    SELECT c.id, ?
+    FROM comentarios c
+    LEFT JOIN comentarios_visualizacao cv 
+        ON cv.comentario_id = c.id AND cv.usuario_id = ?
+    WHERE c.formulario_id = ? 
+      AND c.usuario_id != ? 
+      AND cv.id IS NULL
+");
+$stmtLidos->execute([$usuario_id, $usuario_id, $formulario_id, $usuario_id]);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -118,6 +168,7 @@ $comentarios = $stmtComentarios->fetchAll(PDO::FETCH_ASSOC);
             text-align: center;
         }
 
+        /* ===== Tabela de detalhes ===== */
         table {
             width: 90%;
             border-collapse: collapse;
@@ -142,16 +193,13 @@ $comentarios = $stmtComentarios->fetchAll(PDO::FETCH_ASSOC);
             font-weight: 600;
         }
 
-        tr:last-child td {
-            border-bottom: none;
-        }
-
         td img {
             max-width: 250px;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
+        /* ===== Área de botões ===== */
         .botoes_acoes {
             display: flex;
             justify-content: center;
@@ -188,28 +236,13 @@ $comentarios = $stmtComentarios->fetchAll(PDO::FETCH_ASSOC);
             background-color: #b0b0b0;
         }
 
-        .status_text {
-            font-weight: bold;
-        }
-
-        @media (max-width: 768px) {
-            table {
-                width: 100%;
-            }
-            .botoes_acoes {
-                flex-direction: column;
-                gap: 10px;
-            }
-        }
-
-        /* ===== Área de Comentário ===== */
+        /* ===== Formulário de comentário ===== */
         form {
             width: 90%;
             background-color: #f1f1f1;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin-bottom: 25px;
         }
 
         textarea {
@@ -232,7 +265,6 @@ $comentarios = $stmtComentarios->fetchAll(PDO::FETCH_ASSOC);
             box-shadow: 0 0 0 2px #9a9a9a60;
         }
 
-        /* ===== Botão Salvar Comentário ===== */
         button[type="submit"] {
             margin-top: 12px;
             background-color: #555;
@@ -251,27 +283,6 @@ $comentarios = $stmtComentarios->fetchAll(PDO::FETCH_ASSOC);
             transform: scale(1.03);
         }
 
-        /* ===== Exibição do Comentário ===== */
-        .comentario-container {
-            width: 90%;
-            background-color: #ffffffd9;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            margin-bottom: 25px;
-        }
-
-        .comentario-container strong {
-            color: #222;
-            font-size: 0.9rem;
-        }
-
-        .comentario-text {
-            margin-top: 5px;
-            color: #333;
-            font-size: 0.85rem;
-        }
-
         /* ===== Status ===== */
         .status_box {
             display: inline-block;
@@ -283,6 +294,86 @@ $comentarios = $stmtComentarios->fetchAll(PDO::FETCH_ASSOC);
             font-size: 0.85rem;
             box-shadow: 0 2px 6px rgba(0,0,0,0.15);
             margin-top: 10px;
+        }
+
+        /* ===== Container de comentários ===== */
+        .comentarios-container {
+            width: 90%;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        /* ===== Cada comentário ===== */
+        .comentario-bloco {
+            background: #e8e8e8;
+            border-left: 4px solid #999;
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .comentario-bloco:hover {
+            background: #dcdcdc;
+        }
+
+        /* ===== Destaque: novo comentário ===== */
+        .comentario-bloco.novo-comentario {
+            background-color: #cfcfcf;
+            border-left-color: #666;
+            animation: brilhoCinza 1.8s ease-in-out;
+        }
+
+        @keyframes brilhoCinza {
+            0% { box-shadow: 0 0 0 rgba(100, 100, 100, 0); }
+            50% { box-shadow: 0 0 15px rgba(120, 120, 120, 0.4); }
+            100% { box-shadow: 0 0 0 rgba(100, 100, 100, 0); }
+        }
+
+        /* Cabeçalho do comentário */
+        .comentario-cabecalho {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        .comentario-usuario {
+            font-weight: 600;
+            color: #222;
+        }
+
+        /* Texto do comentário */
+        .comentario-texto {
+            font-size: 0.9rem;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        /* Selo de “Novo” */
+        .etiqueta-novo {
+            position: absolute;
+            top: -8px;
+            right: 10px;
+            background-color: #777;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 3px 8px;
+            border-radius: 8px;
+            animation: fadeOut 4s ease forwards;
+            opacity: 1;
+        }
+
+        @keyframes fadeOut {
+            0%, 70% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-5px); }
         }
 
         /* ===== Voltar ===== */
@@ -351,18 +442,30 @@ $comentarios = $stmtComentarios->fetchAll(PDO::FETCH_ASSOC);
 </form>
 
 <!-- Comentários existentes -->
-<div class="comentario-container">
-<strong>Comentários:</strong>
-<?php if (count($comentarios) > 0): ?>
-    <?php foreach ($comentarios as $c): ?>
-        <div style="margin-top:10px; border-top:1px solid #ddd; padding-top:8px;">
-            <small><strong><?= htmlspecialchars($c['usuario'] ?? 'Usuário') ?></strong> - <?= date('d/m/Y H:i', strtotime($c['data_hora'])) ?></small>
-            <p class="comentario-text"><?= nl2br(htmlspecialchars($c['comentario'])) ?></p>
-        </div>
-    <?php endforeach; ?>
-<?php else: ?>
-    <p class="comentario-text">Nenhum comentário ainda.</p>
-<?php endif; ?>
+<div class="comentarios-container" style="margin-top: 30px;" id="comentarios">
+    <h2 style="color: #444; margin-bottom: 10px;">Comentários</h2>
+    <?php if (count($comentarios) > 0): ?>
+        <?php foreach ($comentarios as $i => $c): 
+            $ultimo = $i === array_key_last($comentarios);
+        ?>
+            <div id="<?= $ultimo ? 'ultimo-comentario' : '' ?>" style="
+                background: <?= $c['novo'] ? '#cfcfcf' : '#e8e8e8' ?>;
+                border-radius: 8px;
+                padding: 10px 15px;
+                margin-bottom: 8px;
+                color: #333;
+                position: relative;
+                ">
+                <div style="font-weight: 600;"><?= htmlspecialchars($c['autor'] ?? 'Usuário') ?></div>
+                <div style="font-size: 0.9rem;"><?= nl2br(htmlspecialchars($c['comentario'])) ?></div>
+                <div style="font-size: 0.8rem; color: #666; margin-top: 5px;">
+                    <?= date('d/m/Y H:i', strtotime($c['data_hora_br'])) ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p style="color: #666;">Nenhum comentário ainda.</p>
+    <?php endif; ?>
 </div>
 
 <!-- Status -->
@@ -382,7 +485,31 @@ $voltar_para = $origem
     : ($_SERVER['HTTP_REFERER'] ?? 'proposta_consulta.php');
 ?>
 <a href="<?= htmlspecialchars($voltar_para) ?>" class="voltar">Voltar</a>
-
 </main>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const novoComentario = urlParams.get("novo");
+
+    // Só rola se o parâmetro "novo=1" estiver presente
+    if (novoComentario === "1") {
+        const ultimo = document.querySelector("#ultimo-comentario");
+        if (ultimo) {
+            ultimo.scrollIntoView({ behavior: "smooth", block: "center" });
+
+            // Efeito de destaque suave
+            ultimo.style.transition = "background-color 1s ease";
+            const corOriginal = ultimo.style.backgroundColor;
+            ultimo.style.backgroundColor = "#fff3b0";
+            setTimeout(() => ultimo.style.backgroundColor = corOriginal, 2000);
+        }
+
+        // Remove o parâmetro da URL sem recarregar a página
+        const novaURL = window.location.href.replace(/(&|\?)novo=1/, "");
+        window.history.replaceState({}, document.title, novaURL);
+    }
+});
+</script>
 </body>
 </html>

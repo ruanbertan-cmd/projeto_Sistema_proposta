@@ -2,8 +2,45 @@
 session_start();
 include(__DIR__ . '/../src/config/conexao.php');
 
-// Consulta os registros da tabela
-$stmt = $conexao->query("SELECT id, volume, unidade_medida, formato, tipologia, borda, local_uso, data_previsao, nome_produto, marca, status FROM formulario ORDER BY id DESC");
+// 🕒 Corrige definitivamente o fuso horário
+date_default_timezone_set('America/Sao_Paulo');
+$conexao->exec("SET time_zone = '-03:00'");
+
+// Verifica login
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
+$usuario_id = $_SESSION['usuario_id'];
+
+// Consulta com flag de novo comentário
+$stmt = $conexao->prepare("
+    SELECT 
+        f.id,
+        f.volume,
+        f.unidade_medida,
+        f.formato,
+        f.tipologia,
+        f.borda,
+        f.local_uso,
+        f.data_previsao,
+        f.nome_produto,
+        f.marca,
+        f.status,
+        EXISTS (
+            SELECT 1
+            FROM comentarios c
+            LEFT JOIN comentarios_visualizacao cv
+                ON cv.comentario_id = c.id AND cv.usuario_id = ?
+            WHERE c.formulario_id = f.id
+              AND cv.id IS NULL
+              AND c.usuario_id != ?
+        ) AS novo_comentario
+    FROM formulario f
+    ORDER BY f.id DESC
+");
+$stmt->execute([$usuario_id, $usuario_id]);
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -174,7 +211,14 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td><?= htmlspecialchars(date('d/m/Y', strtotime($row['data_previsao']))) ?></td>
                     <td><?= htmlspecialchars($row['nome_produto']) ?></td>
                     <td><?= htmlspecialchars($row['marca']) ?></td>
-                    <td><a href="proposta_detalhes.php?id=<?= $row['id'] ?>&origem=fases" class="detalhes">Ver Detalhes</a></td>
+                    <td>
+                        <a href="proposta_detalhes.php?id=<?= $row['id'] ?>&origem=fases" class="detalhes">
+                            Ver Detalhes
+                            <?php if ($row['novo_comentario']): ?>
+                                <span style="color:#ffeb3b; margin-left:5px;">🔔</span>
+                            <?php endif; ?>
+                        </a>
+                    </td>
                     <td>
                         <?php if ($row['status'] === 'Em analise'): ?>
                             <a href="#" class="aprovar" onclick="confirmAction('aprovar', <?= $row['id'] ?>)">Aprovar</a>
