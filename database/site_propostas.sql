@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Tempo de geração: 29/10/2025 às 14:11
--- Versão do servidor: 8.0.43
+-- Tempo de geração: 04/11/2025 às 21:17
+-- Versão do servidor: 8.0.44
 -- Versão do PHP: 8.3.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -24,40 +24,164 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Estrutura para tabela `comentarios`
+--
+
+CREATE TABLE `comentarios` (
+  `id` int NOT NULL,
+  `formulario_id` int NOT NULL,
+  `usuario_id` int DEFAULT NULL,
+  `comentario` text NOT NULL,
+  `data_hora` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `comentarios`
+--
+
+INSERT INTO `comentarios` (`id`, `formulario_id`, `usuario_id`, `comentario`, `data_hora`) VALUES
+(35, 26, 2, 'Novidade?', '2025-11-03 22:45:49'),
+(36, 25, 1, 'asd', '2025-11-03 22:48:35'),
+(37, 25, 2, 'asvav', '2025-11-03 22:51:38'),
+(38, 25, 1, 'hoje?', '2025-11-03 22:53:56'),
+(39, 26, 2, 'as', '2025-11-03 22:59:40'),
+(40, 26, 2, 'asd', '2025-11-03 22:59:51'),
+(41, 26, 2, 'asd', '2025-11-03 23:00:33'),
+(42, 26, 2, 'ads', '2025-11-03 23:03:01'),
+(43, 26, 2, 'asd', '2025-11-03 23:09:08'),
+(44, 26, 2, 'asd', '2025-11-03 23:12:15'),
+(45, 26, 2, 'asd', '2025-11-03 23:17:26'),
+(46, 26, 2, 'asd', '2025-11-03 23:18:01'),
+(47, 26, 2, 'asd', '2025-11-03 23:18:08'),
+(48, 26, 2, 'sad', '2025-11-03 23:21:43'),
+(49, 26, 2, 'asd', '2025-11-03 23:21:47'),
+(50, 26, 2, 'asd', '2025-11-03 23:23:04'),
+(51, 12, 2, 'sgd', '2025-11-03 23:23:29'),
+(52, 25, 1, 'Quero respostas', '2025-11-03 23:37:57'),
+(53, 25, 1, 'asd', '2025-11-03 23:40:07'),
+(54, 26, 1, 'asd', '2025-11-03 23:42:41'),
+(55, 26, 1, 'Alguma novidade?', '2025-11-04 18:17:00');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `comentarios_visualizacao`
+--
+
+CREATE TABLE `comentarios_visualizacao` (
+  `id` int NOT NULL,
+  `comentario_id` int NOT NULL,
+  `usuario_id` int NOT NULL,
+  `data_visualizacao` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `comentarios_visualizacao`
+--
+
+INSERT INTO `comentarios_visualizacao` (`id`, `comentario_id`, `usuario_id`, `data_visualizacao`) VALUES
+(1, 35, 1, '2025-11-03 22:46:56'),
+(2, 35, 2, '2025-11-03 22:51:24'),
+(3, 36, 2, '2025-11-03 22:51:29'),
+(4, 37, 2, '2025-11-03 22:51:38'),
+(5, 36, 1, '2025-11-03 22:52:00'),
+(6, 37, 1, '2025-11-03 22:52:00'),
+(8, 38, 1, '2025-11-03 22:53:56'),
+(9, 38, 2, '2025-11-03 22:54:20'),
+(10, 39, 2, '2025-11-03 22:59:40'),
+(11, 40, 2, '2025-11-03 22:59:51'),
+(12, 41, 2, '2025-11-03 23:00:33'),
+(13, 42, 2, '2025-11-03 23:03:01'),
+(14, 43, 2, '2025-11-03 23:09:08'),
+(15, 44, 2, '2025-11-03 23:12:15'),
+(16, 45, 2, '2025-11-03 23:17:26'),
+(17, 46, 2, '2025-11-03 23:18:01'),
+(18, 47, 2, '2025-11-03 23:18:08'),
+(19, 39, 1, '2025-11-03 23:18:33'),
+(20, 40, 1, '2025-11-03 23:18:33'),
+(21, 41, 1, '2025-11-03 23:18:33'),
+(22, 42, 1, '2025-11-03 23:18:33'),
+(23, 43, 1, '2025-11-03 23:18:33'),
+(24, 44, 1, '2025-11-03 23:18:33'),
+(25, 45, 1, '2025-11-03 23:18:33'),
+(26, 46, 1, '2025-11-03 23:18:33'),
+(27, 47, 1, '2025-11-03 23:18:33'),
+(34, 48, 2, '2025-11-03 23:21:43'),
+(35, 49, 2, '2025-11-03 23:21:48'),
+(36, 50, 2, '2025-11-03 23:23:04'),
+(37, 51, 2, '2025-11-03 23:23:29'),
+(38, 51, 1, '2025-11-03 23:23:51'),
+(39, 48, 1, '2025-11-03 23:23:55'),
+(40, 49, 1, '2025-11-03 23:23:55'),
+(41, 50, 1, '2025-11-03 23:23:55'),
+(42, 52, 1, '2025-11-03 23:37:57'),
+(43, 53, 1, '2025-11-03 23:40:07'),
+(44, 54, 1, '2025-11-03 23:42:41'),
+(45, 54, 2, '2025-11-03 23:43:17'),
+(46, 52, 2, '2025-11-03 23:43:26'),
+(47, 53, 2, '2025-11-03 23:43:26'),
+(48, 55, 1, '2025-11-04 18:17:00');
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura para tabela `formulario`
 --
 
 CREATE TABLE `formulario` (
   `id` int NOT NULL,
   `volume` double NOT NULL,
-  `unidade_medida` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `formato` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tipologia` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `borda` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `cor` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `local_uso` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `unidade_medida` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `polo` varchar(6) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `formato` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tipologia` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `borda` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cor` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `local_uso` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `data_previsao` date NOT NULL,
   `preco` decimal(10,2) DEFAULT NULL,
-  `cliente` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `obra` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nome_produto` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `marca` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `embalagem` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `observacao` text COLLATE utf8mb4_unicode_ci,
-  `status` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Em analise',
-  `comentario_Lib_Produto` text COLLATE utf8mb4_unicode_ci
+  `cliente` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `obra` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nome_produto` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `marca` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `embalagem` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `imagem` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `observacao` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `usuario_id` int NOT NULL,
+  `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Em analise'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Despejando dados para a tabela `formulario`
 --
 
-INSERT INTO `formulario` (`id`, `volume`, `unidade_medida`, `formato`, `tipologia`, `borda`, `cor`, `local_uso`, `data_previsao`, `preco`, `cliente`, `obra`, `nome_produto`, `marca`, `embalagem`, `observacao`, `status`, `comentario_Lib_Produto`) VALUES
-(1, 1213, 'PC', '60X120', 'PORCELANATO', 'BOLD', 'BRANCO', 'PISO', '2025-12-31', 241.29, 'RUAN LTDA', 'SOL AMENTOS', 'MARMORE BRANCO GIASSI AC 60X120', 'DECORTILES', 'NÃO', 'CLIENTE DE MUITA IMPORTANCIA, MUITO TEMPO E MUITAS QUANTIDADES VENDIDAS PARA S CONSTRUÇÕES DESSE CLIENTE NA REGIÃO', 'Aprovado 26/10/2025', 'teste123'),
-(2, 1111, 'M2', '60X120', 'PORCELANATO', 'RETIFICADO', 'BRANCO', 'PISO', '2025-12-31', 99.99, 'RUAN LTDA', 'GIASSI POUSADAS', 'MUNARI PRETO CASTAGNETI AC 90X90', 'ELIANE', 'NÃO', 'CONTRA O TEMPO, CONCORRENTE TEM EM PORTIFOLIO', 'Rejeitado 26/10/2025', 'asf'),
-(3, 35235, 'PC', '60X120', 'PORCELANATO', 'RETIFICADO', 'BRANCO', 'PISO', '2026-02-13', 99.99, 'RUAN COMERCIO', 'CASTANHETI', 'MARMORE BRANCO GIASSI AC 60X120', 'ELIANE', 'NÃO', 'CONTRA O TEMPO, CONCORRENTE TEM EM PORTIFOLIO', 'Aprovado 26/10/2025', 'ssss'),
-(4, 1111, 'PC', '60X120', 'PORCELANATO', 'RETIFICADO', 'PRETO', 'PISO', '2027-02-13', 133.00, 'GIASSI LTDA', 'GIASSI POUSADAS', 'MUNARI PRETO CASTAGNETI AC 90X90', 'ELIANE', 'NAO', 'CLIENTE DE MUITA IMPORTANCIA, MUITO TEMPO E MUITAS QUANTIDADES VENDIDAS PARA S CONSTRUÇÕES DESSE CLIENTE NA REGIÃO', 'Rejeitado 26/10/2025', NULL),
-(5, 1111, 'M2', '60X120', 'PORCELANATO', 'RETIFICADO', 'BRANCO', 'PISO', '2027-12-31', 133.00, 'RUAN LTDA', 'GIASSI POUSADAS', 'MUNARI PRETO CASTAGNETI AC 90X90', 'ELIANE', 'NÃO', 'CLIENTE DE MUITA IMPORTANCIA, MUITO TEMPO E MUITAS QUANTIDADES VENDIDAS PARA S CONSTRUÇÕES DESSE CLIENTE NA REGIÃO', 'Aprovado 26/10/2025', 'ddd');
+INSERT INTO `formulario` (`id`, `volume`, `unidade_medida`, `polo`, `formato`, `tipologia`, `borda`, `cor`, `local_uso`, `data_previsao`, `preco`, `cliente`, `obra`, `nome_produto`, `marca`, `embalagem`, `imagem`, `observacao`, `usuario_id`, `status`) VALUES
+(1, 1213, 'PC', '', '60X120', 'PORCELANATO', 'BOLD', 'BRANCO', 'PISO', '2025-12-31', 241.29, 'RUAN LTDA', 'SOL AMENTOS', 'MARMORE BRANCO GIASSI AC 60X120', 'DECORTILES', 'NÃO', '', 'CLIENTE DE MUITA IMPORTANCIA, MUITO TEMPO E MUITAS QUANTIDADES VENDIDAS PARA S CONSTRUÇÕES DESSE CLIENTE NA REGIÃO', 0, 'Aprovado 26/10/2025'),
+(2, 1111, 'M2', '', '60X120', 'PORCELANATO', 'RETIFICADO', 'BRANCO', 'PISO', '2025-12-31', 99.99, 'RUAN LTDA', 'GIASSI POUSADAS', 'MUNARI PRETO CASTAGNETI AC 90X90', 'ELIANE', 'NÃO', '', 'CONTRA O TEMPO, CONCORRENTE TEM EM PORTIFOLIO', 0, 'Rejeitado 26/10/2025'),
+(3, 35235, 'PC', '', '60X120', 'PORCELANATO', 'RETIFICADO', 'BRANCO', 'PISO', '2026-02-13', 99.99, 'RUAN COMERCIO', 'CASTANHETI', 'MARMORE BRANCO GIASSI AC 60X120', 'ELIANE', 'NÃO', '', 'CONTRA O TEMPO, CONCORRENTE TEM EM PORTIFOLIO', 0, 'Aprovado 26/10/2025'),
+(4, 1111, 'PC', '', '60X120', 'PORCELANATO', 'RETIFICADO', 'PRETO', 'PISO', '2027-02-13', 133.00, 'GIASSI LTDA', 'GIASSI POUSADAS', 'MUNARI PRETO CASTAGNETI AC 90X90', 'ELIANE', 'NAO', '', 'CLIENTE DE MUITA IMPORTANCIA, MUITO TEMPO E MUITAS QUANTIDADES VENDIDAS PARA S CONSTRUÇÕES DESSE CLIENTE NA REGIÃO', 0, 'Rejeitado 26/10/2025'),
+(5, 1111, 'M2', '', '60X120', 'PORCELANATO', 'RETIFICADO', 'BRANCO', 'PISO', '2027-12-31', 133.00, 'RUAN LTDA', 'GIASSI POUSADAS', 'MUNARI PRETO CASTAGNETI AC 90X90', 'ELIANE', 'NÃO', '', 'CLIENTE DE MUITA IMPORTANCIA, MUITO TEMPO E MUITAS QUANTIDADES VENDIDAS PARA S CONSTRUÇÕES DESSE CLIENTE NA REGIÃO', 0, 'Aprovado 26/10/2025'),
+(6, 24, 'PC', '', '10X20', 'PORCELANATO GL', 'BOLD', 'BRANCO', 'PISO', '2026-12-31', 129.99, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MAMORE BRANCO', 'ELIANE', 'SIM', '', 'PRECISAMOS DE EMBALAGEM ESPECIAL COM O NOME DO CLIENTE SOL DA MANHA. TEMOS QUE AGILIZAR PARA NÃO PERDERMOS O NEGOCIO.', 0, 'Aprovado 30/10/2025'),
+(7, 7000, 'M2', 'SC', '120X120', 'PORC GL', 'RETIFICADO', 'BRANCO', 'PISO', '2027-03-12', 122.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120 ', 'ELIANE', 'SIM', '', 'PRECISAMOS DE EMBALAGEM ESPECIAL COM O NOME DO CLIENTE SOL DA MANHA. TEMOS QUE AGILIZAR PARA NÃO PERDERMOS O NEGOCIO.', 0, 'Em analise'),
+(8, 100, 'M2', 'SC', '120X120', 'PORC GL', 'RETIFICADO', 'BRANCO', 'PISO', '2028-12-13', 123.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120 ', 'ELIANE', 'SIM', '', 'PRECISAMOS DE EMBALAGEM ESPECIAL COM O NOME DO CLIENTE SOL DA MANHA. TEMOS QUE AGILIZAR PARA NÃO PERDERMOS O NEGOCIO.', 0, 'Em analise'),
+(9, 1000, 'M2', 'SC', '120X120', 'PORC GL', 'RETIFICADO', 'BRANCO', 'PISO', '2025-11-14', 122.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120 ', 'ELIANE', 'SIM', '', 'PRECISAMOS DE EMBALAGEM ESPECIAL COM O NOME DO CLIENTE SOL DA MANHA. TEMOS QUE AGILIZAR PARA NÃO PERDERMOS O NEGOCIO.', 0, 'Em analise'),
+(10, 1200, 'M2', 'SC', '120X120', 'PORC GL', 'RETIFICADO', 'BRANCO', 'PISO', '2025-11-17', 122.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120 ', 'ELIANE', 'SIM', '', 'PRECISAMOS DE EMBALAGEM ESPECIAL COM O NOME DO CLIENTE SOL DA MANHA. TEMOS QUE AGILIZAR PARA NÃO PERDERMOS O NEGOCIO.', 0, 'Em analise'),
+(11, 122, 'M2', 'SC', '120X120', 'PORC GL', 'RETIFICADO', 'BRANCO', 'PISO', '2029-12-12', 122.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120 ', 'ELIANE', 'SIM', '', 'PRECISAMOS DE EMBALAGEM ESPECIAL COM O NOME DO CLIENTE SOL DA MANHA. TEMOS QUE AGILIZAR PARA NÃO PERDERMOS O NEGOCIO.', 0, 'Em analise'),
+(12, 122, 'M2', 'SC', '120X120', 'PORC GL', 'RETIFICADO', 'BRANCO', 'PISO', '2025-11-18', 122.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120 ', 'ELIANE', 'SIM', '', 'PRECISAMOS DE EMBALAGEM ESPECIAL COM O NOME DO CLIENTE SOL DA MANHA. TEMOS QUE AGILIZAR PARA NÃO PERDERMOS O NEGOCIO.', 0, 'Em analise'),
+(13, 122, 'M2', 'SC', '120X120', 'PORC GL', 'RETIFICADO', 'BRANCO', 'PISO', '2025-11-27', 122.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120', 'ELIZABETH', 'SIM', '', 'PRECISAMOS DE EMBALAGEM ESPECIAL COM O NOME DO CLIENTE SOL DA MANHA. TEMOS QUE AGILIZAR PARA NÃO PERDERMOS O NEGOCIO.', 0, 'Em analise'),
+(14, 100, 'M2', 'SC', '120X120', 'PORC GL', 'RETIFICADO', 'BRANCO', 'PISO', '2025-11-17', 1222.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120', 'ELIANE', 'SIM', '', 'PRECISAMOS DE EMBALAGEM ESPECIAL COM O NOME DO CLIENTE SOL DA MANHA. TEMOS QUE AGILIZAR PARA NÃO PERDERMOS O NEGOCIO.', 0, 'Em analise'),
+(15, 3000, 'M2', 'SC', '100X100', 'PORC UGL', 'RETIFICADO', 'BRANCO', 'PISO', '2025-11-19', 133.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120', 'DECORTILES', 'SIM', '', 'PRECISAMOS DE EMBALAGEM ESPECIAL COM O NOME DO CLIENTE SOL DA MANHA. TEMOS QUE AGILIZAR PARA NÃO PERDERMOS O NEGOCIO.', 0, 'Em analise'),
+(16, 122, 'PC', 'SC', '120X120', 'PORC GL', 'RETIFICADO', 'BRANCO', 'PISO', '2025-11-20', 244.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120', 'ELIANE', 'SIM', '', 'PRECISAMOS DE EMBALAGEM ESPECIAL COM O NOME DO CLIENTE SOL DA MANHA. TEMOS QUE AGILIZAR PARA NÃO PERDERMOS O NEGOCIO.', 0, 'Em analise'),
+(17, 123, 'M2', 'SC', '1X1', 'PORC GL', 'RETIFICADO', 'BRANCO', 'PISO', '2025-11-19', 212.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120', 'ELIZABETH', 'SIM', '', 'PRECISAMOS DE EMBALAGEM ESPECIAL COM O NOME DO CLIENTE SOL DA MANHA. TEMOS QUE AGILIZAR PARA NÃO PERDERMOS O NEGOCIO.', 0, 'Em analise'),
+(18, 122, 'M2', 'SC', '120X120', 'AZULEJO', 'RETIFICADO', 'BRANCO', 'PISO', '2025-11-12', 133.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120', 'ELIANE', 'NAO', '', 'PRECISAMOS DE EMBALAGEM ESPECIAL COM O NOME DO CLIENTE SOL DA MANHA. TEMOS QUE AGILIZAR PARA NÃO PERDERMOS O NEGOCIO.', 0, 'Em analise'),
+(19, 122, 'M2', 'SC', '7X26', 'AZULEJO', 'BOLD', 'BRANCO', 'PISO', '2025-11-12', 123.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120', 'ELIANE', 'NAO', '', 'PRECISAMOS DE EMBALAGEM ESPECIAL COM O NOME DO CLIENTE SOL DA MANHA. TEMOS QUE AGILIZAR PARA NÃO PERDERMOS O NEGOCIO.', 0, 'Aprovado 02/11/2025'),
+(20, 2000, 'M2', 'SC', '120X120', 'PORC GL', 'RETIFICADO', 'BRANCO', 'PISO', '2025-11-11', 122.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120', 'ELIANE', 'NAO', 'img_69075e0fc08283.21716685.jpg', 'PRECISAMOS DE EMBALAGEM ESPECIAL COM O NOME DO CLIENTE SOL DA MANHA. TEMOS QUE AGILIZAR PARA NÃO PERDERMOS O NEGOCIO.', 0, 'Rejeitado 02/11/2025'),
+(21, 2000, 'M2', 'SC', '120X120', 'PORC GL', 'RETIFICADO', 'BRANCO', 'PISO', '2025-11-12', 122.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120', 'ELIANE', 'NAO', 'img_69075fd9310c61.47221155.jpg', 'PRECISAMOS DE EMBALAGEM ESPECIAL COM O NOME DO CLIENTE SOL DA MANHA. TEMOS QUE AGILIZAR PARA NÃO PERDERMOS O NEGOCIO.', 0, 'Aprovado 02/11/2025'),
+(22, 5000, 'M2', 'BA', '120X120', 'PORC GL', 'RETIFICADO', 'BRANCO', 'PISO', '2025-11-17', 42.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120', 'ELIANE', 'SIM', 'img_690768caea1cd5.36468200.jpg', 'PRECISAMOS PARA HOJE', 0, 'Rejeitado 03/11/2025'),
+(23, 6000, 'M2', 'BA', '120X120', 'AZULEJO', 'RETIFICADO', 'BRANCO', 'PISO', '2025-11-26', 122.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120', 'DECORTILES', 'NAO', NULL, '', 0, 'Aprovado 02/11/2025'),
+(24, 6000, 'M2', 'SC', '120X120', 'PORC GL', 'RETIFICADO', 'BRANCO', 'PISO', '2025-12-03', 52.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120', 'ELIZABETH', 'NAO', NULL, 'PRECISAMOS PARA HOJE', 1, 'Aprovado 02/11/2025'),
+(25, 5000, 'M2', 'SC', '120X120', 'PORC GL', 'RETIFICADO', 'BRANCO', 'PISO', '2025-12-04', 122.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120', 'DECORTILES', 'NAO', NULL, 'PRECISAMOS DE EMBALAGEM ESPECIAL COM O NOME DO CLIENTE SOL DA MANHA. TEMOS QUE AGILIZAR PARA NÃO PERDERMOS O NEGOCIO. CLIENTE ESTA COM MUITA PRESSA, VERIFICAR PARA DAR UMA ATENÇÃO ESPECIAL. ESTAMOS CORRENDO CONTRA CONCORRENTES TAMBEM. CHANCE DE PERDER NEGOCIO.', 1, 'Aprovado 02/11/2025'),
+(26, 12233, 'M2', 'SC', '120X120', 'PORC GL', 'RETIFICADO', 'BRANCO', 'PISO', '2025-11-11', 122.00, 'SOL DA MANHA', 'EDIFICIO CASTANHEIRA', 'MARMORE SOL AC 120X120', 'DECORTILES', 'NAO', NULL, '', 2, 'Em analise');
 
 -- --------------------------------------------------------
 
@@ -68,7 +192,7 @@ INSERT INTO `formulario` (`id`, `volume`, `unidade_medida`, `formato`, `tipologi
 CREATE TABLE `usuario` (
   `id` int NOT NULL,
   `usuario` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `senha` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `senha` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `data` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -77,11 +201,27 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`id`, `usuario`, `senha`, `data`) VALUES
-(1, 'Ruan123', '$2y$10$t/jEtqj5ISA4e3Xmj/8sDOS9ela1UKHw2Zebzs0XsHhPbXaioBXUq', '2025-10-26 20:20:17');
+(1, 'Ruan123', '$2y$10$t/jEtqj5ISA4e3Xmj/8sDOS9ela1UKHw2Zebzs0XsHhPbXaioBXUq', '2025-10-26 20:20:17'),
+(2, 'Ruan1234', '$2y$10$lyYATLZOB0yOs5ISIs1ihe0uySr58t3SbB65aqTJo9jsGBwxIKBsy', '2025-11-02 19:50:44');
 
 --
 -- Índices para tabelas despejadas
 --
+
+--
+-- Índices de tabela `comentarios`
+--
+ALTER TABLE `comentarios`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `formulario_id` (`formulario_id`);
+
+--
+-- Índices de tabela `comentarios_visualizacao`
+--
+ALTER TABLE `comentarios_visualizacao`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unico_usuario_comentario` (`comentario_id`,`usuario_id`),
+  ADD KEY `usuario_id` (`usuario_id`);
 
 --
 -- Índices de tabela `formulario`
@@ -100,16 +240,45 @@ ALTER TABLE `usuario`
 --
 
 --
+-- AUTO_INCREMENT de tabela `comentarios`
+--
+ALTER TABLE `comentarios`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+
+--
+-- AUTO_INCREMENT de tabela `comentarios_visualizacao`
+--
+ALTER TABLE `comentarios_visualizacao`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+
+--
 -- AUTO_INCREMENT de tabela `formulario`
 --
 ALTER TABLE `formulario`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de tabela `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- Restrições para tabelas despejadas
+--
+
+--
+-- Restrições para tabelas `comentarios`
+--
+ALTER TABLE `comentarios`
+  ADD CONSTRAINT `comentarios_ibfk_1` FOREIGN KEY (`formulario_id`) REFERENCES `formulario` (`id`) ON DELETE CASCADE;
+
+--
+-- Restrições para tabelas `comentarios_visualizacao`
+--
+ALTER TABLE `comentarios_visualizacao`
+  ADD CONSTRAINT `comentarios_visualizacao_ibfk_1` FOREIGN KEY (`comentario_id`) REFERENCES `comentarios` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `comentarios_visualizacao_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
