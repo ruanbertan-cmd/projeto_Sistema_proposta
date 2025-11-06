@@ -13,6 +13,7 @@ polo - Ok, na planilha
 
 R: Ok, proposta cadastrada considerando como formato de corte!
 
+
 Situação 2 (Ok, tudo dentro da planilha):
 formato - Ok, na planilha
 volume - Ok, de acordo
@@ -43,6 +44,7 @@ polo - Ok, na planilha
 
 R: Bloqueado, tipologia não esta presente para o Formato (...) un (...) no polo (...).
 
+
 Situação 4 (un errada, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
 formato - Ok, na planilha
 volume - Ok, na planilha
@@ -51,6 +53,7 @@ un - False, não esta na planilha
 polo - Ok, na planilha
 
 R: Bloqueado, não temos a unidade de medida (...) ao conjunto de Formato (...) Tipologia (...) no polo (...).
+
 
 Situação 5 (polo errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
 formato - Ok, na planilha
@@ -61,12 +64,32 @@ polo - False, não esta na planilha
 
 R: Bloqueado, no polo (...) informado, não temos o conjunto de Tipologia (...), Formato (...) un (...) no polo (...).
 
-Situação 6 (formato e tipologia errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
-formato - False, não esta na planilha
+
+Situação 6 (tipologia e un errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
+formato - Ok, na planilha
 volume - Ok, na planilha
-tipologia - Ok, na planilha
-un - Ok, na planilha
+tipologia - False, não esta na planilha
+un - False, não esta na planilha
 polo - Ok, na planilha
 
-R: Bloqueado, no polo (...) informado, não temos o conjunto de Tipologia (...), Formato (...) un (...) no polo (...).
+R: Bloqueado, Tipologia (...) e unidade de medida (...) informado, não temos dentro do polo (...) e Formato(...).
 
+
+Situação 7 (polo e un errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
+formato - Ok, na planilha
+volume - Ok, na planilha
+tipologia - Ok, na planilha
+un - False, não esta na planilha
+polo - False, não esta na planilha
+
+R: Bloqueado, Polo (...) e unidade de medida (...) informado, não esta prensente no conjunto Formato (...) e Tipologia(...).
+
+
+Situação 8 (polo e tipologia errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
+formato - Ok, na planilha
+volume - Ok, na planilha
+tipologia - False, não esta na planilha
+un - Ok, na planilha
+polo - False, não esta na planilha
+
+R: Bloqueado, Polo (...) e tipologia (...) informado, não esta prensente no conjunto Formato (...) e Unidade de Medida (...).
