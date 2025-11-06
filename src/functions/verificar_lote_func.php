@@ -12,70 +12,103 @@ function identificarUnidade($emp, $uni) {
 }
 
 function verificarLoteMinimoCSV($polo, $tipologia, $formato, $volume, $unidade_medida = null) {
-    $caminhoCsv = realpath(__DIR__ . '/../data/produtos_lote_minimo.csv');
+    $caminhoCsv = realpath(__DIR__ . '/../data/lote_minimo.xlsx');
     if ($caminhoCsv === false || !file_exists($caminhoCsv)) {
         return [
             'status' => false,
-            'mensagem' => "❌ Arquivo CSV não encontrado."
+            'mensagem' => "❌ Arquivo de lote mínimo não encontrado no sistema. Contate o suporte."
         ];
     }
 
     if (($handle = fopen($caminhoCsv, 'r')) === false) {
         return [
             'status' => false,
-            'mensagem' => "❌ Erro ao abrir o arquivo CSV."
+            'mensagem' => "❌ Não foi possível abrir o arquivo de lote mínimo. Tente novamente."
         ];
     }
 
     fgetcsv($handle, 1000, ';'); // Ignora cabeçalho
 
-    $regraDeLoteDeEntrada = false; // Inicializa
+    $formatosNaPlanilha = [];
+    $poloEncontrado = false;
+    $tipologiaEncontrada = false;
+    $unidadeEncontrada = false;
 
-    // Variável para rastrear se encontramos a regra de lote mínimo para a tríade
+    // Primeiro, vamos mapear todos os formatos disponíveis
+    while (($dados = fgetcsv($handle, 1000, ';')) !== false) {
+        $formatoBase = strtoupper(trim($dados[4] ?? '')); // coluna do formato
+        if ($formatoBase !== '') {
+            $formatosNaPlanilha[] = $formatoBase;
+        }
+    }
+
+    // Volta o ponteiro pro início do arquivo para fazer a leitura normal
+    rewind($handle);
+    fgetcsv($handle, 1000, ';'); // Ignora cabeçalho novamente
+
+    // Se o formato informado não existir na planilha → aceitar automaticamente
+    if (!in_array(strtoupper($formato), $formatosNaPlanilha)) {
+        fclose($handle);
+        return [
+            'status' => true,
+            'mensagem' => "Considerando o Formato '$formato' como personalização de corte. Cadastro liberado."
+        ];
+    }
+
+    // Percorre o CSV normalmente, agora sabendo que o formato existe
     while (($dados = fgetcsv($handle, 1000, ';')) !== false) {
         $emp = trim($dados[0] ?? '');
         $uni = trim($dados[1] ?? '');
-        $tipologiaBase = strtoupper(trim($dados[5] ?? ''));
-        $unBase = strtoupper(trim($dados[6] ?? ''));
-        $loteMinimo = (float) str_replace(',', '.', trim($dados[9] ?? 0));
+        $formatoBase = strtoupper(trim($dados[4] ?? ''));
+        $tipologiaBase = strtoupper(trim($dados[6] ?? ''));
+        $unBase = strtoupper(trim($dados[7] ?? ''));
+        $loteMinimo = (float) str_replace(',', '.', trim($dados[10] ?? 0));
+        $poloPlanilha = identificarUnidade($emp, $uni);
 
-        // Checagem apenas das informações Polo, Tipologia e Unidade. Se não tiver no CSV não cadastra
+        // Marca o que foi encontrado
+        if ($poloPlanilha === strtoupper($polo)) $poloEncontrado = true;
+        if ($tipologiaBase === strtoupper($tipologia)) $tipologiaEncontrada = true;
+        if ($unBase === strtoupper($unidade_medida)) $unidadeEncontrada = true;
+
+        // Valida a combinação completa (agora considerando também o formato)
         if (
-            identificarUnidade($emp, $uni) === strtoupper($polo) &&
+            $poloPlanilha === strtoupper($polo) &&
+            $formatoBase === strtoupper($formato) &&
             strcasecmp($tipologiaBase, $tipologia) === 0 &&
             ($unidade_medida === null || strcasecmp($unBase, $unidade_medida) === 0)
         ) {
             fclose($handle);
 
-            // Se encontrou a regra, testa o volume
+            // Verifica volume
             if ($volume < $loteMinimo) {
                 return [
                     'status' => false,
-                    'mensagem' => "⚠️ O volume solicitado ($volume $unBase) é inferior ao lote mínimo ($loteMinimo $unBase) para $formato - $tipologia ($polo)."
+                    'mensagem' => "⚠️ O volume informado ($volume $unBase) é inferior ao lote mínimo exigido ($loteMinimo $unBase) para $formato - $tipologia ($polo)."
                 ];
             }
 
-            // Volume OK, retorna SUCESSO e ENCERRA
             return [
                 'status' => true,
-                'mensagem' => "✅ Volume atende o lote mínimo ($loteMinimo $unBase)."
+                'mensagem' => "✅ Volume dentro do lote mínimo ($loteMinimo $unBase)."
             ];
         }
     }
 
-    // Se chegou aqui nenhuma função foi encontrada após percorrer todo o CSV
     fclose($handle);
 
-    // Bloqueia se a regra não for encontrada (Polo + Tipologia + Unidade)
-    if ($regraDeLoteDeEntrada === false) {
-        return [
-            'status' => false,
-            'mensagem' => "Produção inviável, não conseguimos realizar a produção no Polo ($polo), Tipologia ($tipologia) e Unidade ($unidade_medida). Cadastro bloqueado."
-        ];
+    // Monta mensagem específica conforme o que não foi encontrado
+    if (!$poloEncontrado) {
+        $motivo = "❌ Polo '$polo' não disponível para produção.";
+    } elseif (!$tipologiaEncontrada) {
+        $motivo = "❌ Tipologia '$tipologia' não disponível no polo '$polo'.";
+    } elseif (!$unidadeEncontrada) {
+        $motivo = "❌ Unidade de medida '$unidade_medida' não utilizada para '$tipologia' no polo '$polo'.";
+    } else {
+        $motivo = "❌ Regra de produção não encontrada para a combinação informada.";
     }
 
     return [
-        'status' => true,
-        'mensagem' => "✅ Validação de lote completa."
+        'status' => false,
+        'mensagem' => "$motivo Produção inviável, cadastro bloqueado."
     ];
 }

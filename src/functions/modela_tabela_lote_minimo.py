@@ -62,6 +62,9 @@ df_completo.drop(columns=['Cod Bit'], inplace=True)
 if 'Un' in df_completo.columns:
     df_completo['Un'] = df_completo['Un'].astype(str).str.upper()
 
+if 'formato' in df_completo.columns:
+    df_completo['formato'] = df_completo['formato'].astype(str).str.upper()
+
 # Reorganiza colunas (Tecnologia e Un após formato)
 colunas = list(df_completo.columns)
 pos_formato = colunas.index('formato')
@@ -73,8 +76,13 @@ for col in ['Tecnologia', 'Un']:
 
 df_completo = df_completo[colunas]
 
-# === 7. Salva resultado final
-df_completo.to_excel(caminho_saida, index=False)
+# === 7. Salva resultado final em CSV
+df_completo.to_csv(
+    caminho_saida,
+    index=False,
+    sep=';',                # separador padrão do seu sistema
+    encoding='utf-8-sig'    # garante compatibilidade com Excel
+)
 
 print(f'✅ Planilha combinada com sucesso!\n💾 Arquivo salvo em: {caminho_saida}')
 print(df_completo.head(10))
