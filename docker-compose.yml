@@ -1,8 +1,6 @@
 version: '3.8'
 
 services:
-
-# Serviço PHP com Apache
   php:
     build: .
     container_name: php_app
@@ -16,7 +14,6 @@ services:
     networks:
       - php_network
 
-# Serviço MySQL
   db:
     image: mysql:8.0
     container_name: db
@@ -27,13 +24,12 @@ services:
       MYSQL_USER: appuser
       MYSQL_PASSWORD: app123
     ports:
-      - '3306:3306'
+      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
     networks:
       - php_network
 
-# Container de administração do banco de dados (phpMyAdmin)
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin
@@ -42,7 +38,7 @@ services:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: Ruan-pause79
     ports:
-      - '8081:80'
+      - "8081:80"
     depends_on:
       - db
     networks:

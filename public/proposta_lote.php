@@ -212,7 +212,7 @@ button:active {
     <div class="tabela_container">
         <h1>Lista de Lote Mínimo Sendo Considerada</h1>
 
-        <form action="../src/controllers/upload_lote.php" method="POST" enctype="multipart/form-data">
+        <form action="/../src/controllers/upload_lote.php" method="POST" enctype="multipart/form-data">
             <input type="file" name="arquivo" accept=".csv" required>
             <button type="submit">Enviar Arquivo</button>
         </form>

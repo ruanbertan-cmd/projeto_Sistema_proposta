@@ -1,5 +1,5 @@
 <?php
-include(__DIR__ . '/config/conexao.php');
+include(__DIR__ . '/../config/conexao.php');
 
 if (!isset($_FILES['arquivo']) || $_FILES['arquivo']['error'] !== UPLOAD_ERR_OK) {
     die("Erro no upload do arquivo.");
