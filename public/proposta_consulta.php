@@ -161,6 +161,7 @@ $propostas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <li><a href="proposta_cadastro.php">Cadastro</a></li>
                 <li><a href="proposta_consulta.php">Consulta</a></li>
                 <li><a href="proposta_aprovacao.php">Aprovação</a></li>
+                <li><a href="proposta_lote.php">Lote</a></li>
             </ul>
         </div>
     </nav>
@@ -168,7 +169,7 @@ $propostas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <main class="main_proposta_consulta">
     <div class="tabela_container">
-        <h1>Minhas Propostas</h1>
+        <h1>Consulta Propostas</h1>
 
         <?php if (count($propostas) > 0): ?>
         <table class="tabela_propostas">

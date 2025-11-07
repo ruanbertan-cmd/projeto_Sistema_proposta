@@ -179,6 +179,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <li><a href="proposta_cadastro.php">Cadastro</a></li>
                 <li><a href="proposta_consulta.php">Consulta</a></li>
                 <li><a href="proposta_aprovacao.php">Aprovação</a></li>
+                <li><a href="proposta_lote.php">Lote</a></li>
             </ul>
         </div>
     </nav>
