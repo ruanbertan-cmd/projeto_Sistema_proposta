@@ -160,7 +160,7 @@ $propostas = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <ul>
                 <li><a href="proposta_cadastro.php">Cadastro</a></li>
                 <li><a href="proposta_consulta.php">Consulta</a></li>
-                <li><a href="proposta_fases.php">Fases</a></li>
+                <li><a href="proposta_aprovacao.php">Aprovação</a></li>
             </ul>
         </div>
     </nav>

@@ -395,7 +395,7 @@ $stmtLidos->execute([$usuario_id, $usuario_id, $formulario_id, $usuario_id]);
     <ul>
         <li><a href="proposta_cadastro.php">Cadastro</a></li>
         <li><a href="proposta_consulta.php">Consulta</a></li>
-        <li><a href="proposta_fases.php">Fases</a></li>
+        <li><a href="proposta_aprovacao.php">Aprovação</a></li>
     </ul>
 </div>
 </nav>
@@ -470,7 +470,7 @@ elseif(str_starts_with($status,'Rejeitado')) $color = 'red';
 <?php
 $origem = $_GET['origem'] ?? null;
 $voltar_para = $origem
-    ? ($origem === 'fases' ? 'proposta_fases.php' : 'proposta_consulta.php')
+    ? ($origem === 'aprovacao' ? 'proposta_aprovacao.php' : 'proposta_consulta.php')
     : ($_SERVER['HTTP_REFERER'] ?? 'proposta_consulta.php');
 ?>
 <a href="<?= htmlspecialchars($voltar_para) ?>" class="voltar">Voltar</a>
