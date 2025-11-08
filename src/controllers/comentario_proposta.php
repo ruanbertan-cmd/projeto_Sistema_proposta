@@ -5,6 +5,10 @@ if (session_status() == PHP_SESSION_NONE) {
 
 include(__DIR__ . '/../config/conexao.php');
 
+//  Corrige definitivamente o fuso horário
+date_default_timezone_set('America/Sao_Paulo');
+$conexao->exec("SET time_zone = '-03:00'");
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $comentario = trim($_POST['comentario_Lib_Produto'] ?? '');
     $id = intval($_GET['id']); // ID vindo pela URL

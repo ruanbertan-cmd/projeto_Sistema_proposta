@@ -1,5 +1,12 @@
 <?php
-include(__DIR__ . '/../config/conexao.php');
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once __DIR__ . '/../config/conexao.php';
+
+date_default_timezone_set('America/Sao_Paulo');
+$conexao->exec("SET time_zone = '-03:00'");
 
 if (!isset($_FILES['arquivo']) || $_FILES['arquivo']['error'] !== UPLOAD_ERR_OK) {
     die("Erro no upload do arquivo.");
@@ -13,20 +20,17 @@ if ($extensao !== 'csv') {
 }
 
 try {
-    // Apaga todos os dados anteriores
     $conexao->exec("DELETE FROM lote_minimo");
-
-    // Detecta automaticamente o delimitador
-    $primeiraLinha = fgets(fopen($caminhoTemp, 'r'));
-    $delimitador = substr_count($primeiraLinha, ';') > substr_count($primeiraLinha, ',') ? ';' : ',';
-    rewind(fopen($caminhoTemp, 'r')); // volta para o início do arquivo
 
     $handle = fopen($caminhoTemp, 'r');
     if ($handle === false) {
         throw new Exception("Erro ao abrir o arquivo.");
     }
 
-    // Lê cabeçalho (descarta)
+    $primeiraLinha = fgets($handle);
+    $delimitador = substr_count($primeiraLinha, ';') > substr_count($primeiraLinha, ',') ? ';' : ',';
+    rewind($handle);
+
     $cabecalho = fgetcsv($handle, 0, $delimitador);
     if (!$cabecalho) {
         throw new Exception("Arquivo CSV vazio ou formato inválido.");
@@ -38,37 +42,30 @@ try {
     $stmt = $conexao->prepare($sql);
 
     $contador = 0;
-
     while (($linha = fgetcsv($handle, 0, $delimitador)) !== false) {
-        // Ignora linhas vazias
         if (empty(array_filter($linha))) continue;
-
-        // Ajusta número de colunas se tiver menos de 13
         $linha = array_pad($linha, 13, null);
-
         $stmt->execute($linha);
         $contador++;
     }
 
     fclose($handle);
 
-    // Registro no histórico
-$stmtHist = $conexao->prepare("
-    INSERT INTO lote_minimo_historico (usuario_id, nome_arquivo, quantidade_registros, observacao)
-    VALUES (?, ?, ?, ?)
-");
+    $stmtHist = $conexao->prepare("
+        INSERT INTO lote_minimo_historico (usuario_id, nome_arquivo, quantidade_registros, observacao)
+        VALUES (?, ?, ?, ?)
+    ");
+    $stmtHist->execute([
+        $_SESSION['usuario_id'] ?? 0,
+        $_FILES['arquivo']['name'],
+        $contador,
+        'Carga substituiu os dados anteriores.'
+    ]);
 
-$stmtHist->execute([
-    $_SESSION['usuario_id'] ?? 0,                     // se não tiver login, grava 0
-    $_FILES['arquivo']['name'],                       // nome do arquivo enviado
-    $contador,                                        // quantidade de registros importados
-    'Carga substituiu os dados anteriores.'           // observação opcional
-]);
-
-
-    // Redireciona de volta à página principal com popup de sucesso
-    header("Location: ../public/proposta_lote.php?upload=ok&count={$contador}");
+    // Caminho relativo (funciona tanto local quanto no servidor)
+    header("Location: /proposta_lote.php?upload=ok&count={$contador}");
     exit;
+
 
 } catch (Exception $e) {
     die("Erro ao processar arquivo: " . $e->getMessage());

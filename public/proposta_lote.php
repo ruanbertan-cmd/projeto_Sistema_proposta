@@ -212,7 +212,7 @@ button:active {
     <div class="tabela_container">
         <h1>Lista de Lote Mínimo Sendo Considerada</h1>
 
-        <form action="/../src/controllers/upload_lote.php" method="POST" enctype="multipart/form-data">
+        <form action="action.php?action=upload_lote" method="POST" enctype="multipart/form-data">
             <input type="file" name="arquivo" accept=".csv" required>
             <button type="submit">Enviar Arquivo</button>
         </form>
@@ -264,8 +264,9 @@ button:active {
 Swal.fire({
     icon: 'success',
     title: 'Arquivo carregado com sucesso!',
+    text: '<?= isset($_GET['count']) ? htmlspecialchars($_GET['count']) . ' registros inseridos.' : '' ?>',
     showConfirmButton: false,
-    timer: 2000
+    timer: 3000
 });
 </script>
 <?php endif; ?>
