@@ -37,7 +37,7 @@ try {
     }
 
     $sql = "INSERT INTO lote_minimo 
-        (Emp, Uni, Polo, Uni_fabril, bitola, Formato, Tipologia, Un, Descricao, Situacao, Lote, lote_alternativo1, lote_alternativo2)
+        (emp, uni, polo, uni_fabril, bitola, formato, tipologia, un, descricao, situacao, Lote, lote_alternativo1, lote_alternativo2)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conexao->prepare($sql);
 
