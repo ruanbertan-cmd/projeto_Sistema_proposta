@@ -212,8 +212,8 @@ button:active {
     <div class="tabela_container">
         <h1>Lista de Lote Mínimo Sendo Considerada</h1>
 
-        <form action="action.php?action=upload_lote" method="POST" enctype="multipart/form-data">
-            <input type="file" name="arquivo" accept=".csv" required>
+        <form action="upload_lote.php" method="POST" enctype="multipart/form-data">
+            <input type="file" name='arquivo' accept=".csv" required>
             <button type="submit">Enviar Arquivo</button>
         </form>
 
@@ -237,17 +237,17 @@ button:active {
             <?php if (!empty($lotes)): ?>
                 <?php foreach ($lotes as $linha): ?>
                     <tr>
-                        <td><?= htmlspecialchars($linha['Emp']) ?></td>
-                        <td><?= htmlspecialchars($linha['Uni']) ?></td>
-                        <td><?= htmlspecialchars($linha['Polo']) ?></td>
-                        <td><?= htmlspecialchars($linha['Uni_fabril']) ?></td>
+                        <td><?= htmlspecialchars($linha['emp']) ?></td>
+                        <td><?= htmlspecialchars($linha['uni']) ?></td>
+                        <td><?= htmlspecialchars($linha['polo']) ?></td>
+                        <td><?= htmlspecialchars($linha['uni_fabril']) ?></td>
                         <td><?= htmlspecialchars($linha['bitola']) ?></td>
-                        <td><?= htmlspecialchars($linha['Formato']) ?></td>
-                        <td><?= htmlspecialchars($linha['Tipologia']) ?></td>
-                        <td><?= htmlspecialchars($linha['Un']) ?></td>
-                        <td><?= htmlspecialchars($linha['Descricao']) ?></td>
-                        <td><?= htmlspecialchars($linha['Situacao']) ?></td>
-                        <td><?= htmlspecialchars($linha['Lote']) ?></td>
+                        <td><?= htmlspecialchars($linha['formato']) ?></td>
+                        <td><?= htmlspecialchars($linha['tipologia']) ?></td>
+                        <td><?= htmlspecialchars($linha['un']) ?></td>
+                        <td><?= htmlspecialchars($linha['descricao']) ?></td>
+                        <td><?= htmlspecialchars($linha['situacao']) ?></td>
+                        <td><?= htmlspecialchars($linha['lote']) ?></td>
                         <td><?= htmlspecialchars($linha['lote_alternativo1']) ?></td>
                         <td><?= htmlspecialchars($linha['lote_alternativo2']) ?></td>
                     </tr>
