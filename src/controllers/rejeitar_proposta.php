@@ -1,16 +1,38 @@
 <?php
-if (session_status() == PHP_SESSION_NONE) {
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-include(__DIR__ . '/../config/conexao.php');
+require_once __DIR__ . '/../config/conexao.php';
 
-// Atualiza o status no banco de dados
+// Captura o ID da proposta
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+if (!$id) {
+    $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+}
 
-$stmt = $conexao -> prepare("UPDATE formulario SET status = CONCAT('Rejeitado ',DATE_FORMAT(NOW(), '%d/%m/%Y')) WHERE id = :id");
-$stmt -> execute([':id' => $id]);
+if (!$id) {
+    $_SESSION['flash_error'] = 'ID da proposta inválido.';
+    header('Location: proposta_aprovacao.php');
+    exit;
+}
 
-// Redirecionando para a listagem
-header('location: proposta_fases.php');
+try {
+    // Atualiza o status no banco
+    $stmt = $conexao->prepare("
+        UPDATE formulario
+        SET status = CONCAT('Rejeitado ', DATE_FORMAT(NOW(), '%d/%m/%Y'))
+        WHERE id = ?
+    ");
+    $stmt->execute([$id]);
+
+    $_SESSION['flash_success'] = 'Proposta rejeitada com sucesso.';
+} catch (PDOException $e) {
+    error_log('Erro ao rejeitar proposta (ID ' . $id . '): ' . $e->getMessage());
+    $_SESSION['flash_error'] = 'Erro ao rejeitar a proposta. Tente novamente.';
+}
+
+// Redireciona para a tela de aprovação
+header('Location: proposta_aprovacao.php');
 exit;
 ?>
