@@ -245,6 +245,7 @@ button:active {
                         <td><?= htmlspecialchars($linha['formato']) ?></td>
                         <td><?= htmlspecialchars($linha['tipologia']) ?></td>
                         <td><?= htmlspecialchars($linha['un']) ?></td>
+                        <td><?= htmlspecialchars($linha['acabamento']) ?></td>
                         <td><?= htmlspecialchars($linha['descricao']) ?></td>
                         <td><?= htmlspecialchars($linha['situacao']) ?></td>
                         <td><?= htmlspecialchars($linha['lote']) ?></td>

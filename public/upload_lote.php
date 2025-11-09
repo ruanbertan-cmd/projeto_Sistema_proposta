@@ -1,10 +1,6 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
+session_start();
 include(__DIR__ . '/../src/config/conexao.php');
-
 
 
 // Fuso horário e timezone do MySQL
@@ -44,8 +40,8 @@ try {
 
     // === Prepara INSERT ===
     $sql = "INSERT INTO lote_minimo 
-        (emp, uni, polo, uni_fabril, bitola, formato, tipologia, un, descricao, situacao, Lote, lote_alternativo1, lote_alternativo2)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        (emp, uni, polo, uni_fabril, bitola, formato, tipologia, un, acabamento, descricao, situacao, Lote, lote_alternativo1, lote_alternativo2)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conexao->prepare($sql);
 
     $contador = 0;
