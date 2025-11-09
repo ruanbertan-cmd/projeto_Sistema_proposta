@@ -1,172 +1,122 @@
-Campos sendo analisados:
-formato
-volume
-tipologia
-un
+# 🧮 Sistema de Validação de Lote Mínimo
 
-Situação 1 (Excessão de formato, mesmo de alguma outra informação não estiver na planilha, considerar do mesmo jeito, por poder ser cortes...):
-formato - False, não esta na planilha
-volume - Ok, de acordo
-tipologia - Ok, na planilha
-un - Ok, na planilha
-polo - Ok, na planilha
-acabamento - Ok, na planilha
+[![PHP](https://img.shields.io/badge/PHP-8.0+-777BB4?logo=php&logoColor=white)](https://www.php.net/)
+[![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
+![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow)
+![License](https://img.shields.io/badge/Licen%C3%A7a-Uso%20Interno-red)
+![Author](https://img.shields.io/badge/Autor-Ruan%20Bertan-blue)
 
-R: Ok, proposta cadastrada considerando como formato de corte!
+---
 
+## 🧠 Sobre o Projeto
 
-Situação 2 (Ok, tudo dentro da planilha):
-formato - Ok, na planilha
-volume - Ok, de acordo
-tipologia - Ok, na planilha
-un - Ok, na planilha
-polo - Ok, na planilha
-acabamento - Ok, na planilha
+Sistema desenvolvido para **automatizar e organizar a validação de propostas comerciais**, garantindo que os volumes informados atendam aos **lotes mínimos definidos** por:
 
-R: Ok, volume atende o lote minimo de tal...
+> **Formato • Volume • Tipologia • Unidade de Medida • Polo • Acabamento**
 
+O objetivo é evitar inconsistências durante o cadastro de propostas e assegurar conformidade com os critérios de lote mínimo estabelecidos pela empresa.
 
-Situação 3 (volume baixo):
-formato - Ok, na planilha
-volume - False, não esta na planilha
-tipologia - Ok, na planilha
-un - Ok, na planilha
-polo - Ok, na planilha
-acabamento - Ok, na planilha
+---
 
-R: Bloqueado, volume inferior ao lote minimo de 4000 m2, etc...
+## ⚙️ Tecnologias Utilizadas
 
+- 🐘 **PHP 8+**
+- 🧮 **MySQL**
+- 🎨 **HTML5 / CSS / JavaScript**
 
+---
 
-Situação 3 (Tipologia errada, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
-formato - Ok, na planilha
-volume - Ok, na planilha
-tipologia - False, não esta na planilha
-un - Ok, na planilha
-polo - Ok, na planilha
-acabamento - Ok, na planilha
+## 🎯 Objetivo do Sistema
 
-R: Bloqueado, tipologia não esta presente para o Formato (...) un (...) no polo (...).
+O sistema realiza cruzamentos automáticos com a planilha de **Lotes Mínimos**, avaliando se os dados informados na proposta cumprem as regras estabelecidas.  
+A resposta é apresentada ao usuário em tempo real com base nos resultados de verificação.
 
+---
 
-Situação 4 (un errada, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
-formato - Ok, na planilha
-volume - Ok, na planilha
-tipologia - Ok, na planilha
-un - False, não esta na planilha
-polo - Ok, na planilha
-acabamento - Ok, na planilha
+## 📊 Exemplos de Situações
 
-R: Bloqueado, não temos a unidade de medida (...) ao conjunto de Formato (...) Tipologia (...) no polo (...).
+### ✅ Situação 1 — Exceção de Formato  
+Mesmo que o formato não esteja na planilha, é considerado válido (formato de corte).
 
+| Campo       | Status                   |
+|--------------|--------------------------|
+| Formato      | ❌ Não está na planilha  |
+| Volume       | ✅ Ok                    |
+| Tipologia    | ✅ Ok                    |
+| Unidade      | ✅ Ok                    |
+| Polo         | ✅ Ok                    |
+| Acabamento   | ✅ Ok                    |
 
-Situação 5 (polo errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
-formato - Ok, na planilha
-volume - Ok, na planilha
-tipologia - Ok, na planilha
-un - Ok, na planilha
-polo - False, não esta na planilha
-acabamento - Ok, na planilha
+**Resultado:** `Ok, proposta cadastrada considerando como formato de corte.`
 
-R: Bloqueado, no polo (...) informado, não temos o conjunto de Tipologia (...), Formato (...) un (...) no polo (...).
+---
 
-Situação 6 (acabamento errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
-formato - Ok, na planilha
-volume - Ok, na planilha
-tipologia - Ok, na planilha
-un - Ok, na planilha
-polo - Ok, na planilha
-acabamento - False, não esta na planilha
+### ✅ Situação 2 — Tudo Ok
+Todos os campos estão na planilha e o volume atende o mínimo.
 
-R: Bloqueado, o acabamento (...) informado, não temos combinação com as demais informações de Tipologia (...), Formato (...) un (...) no polo (...).
+**Resultado:** `Ok, volume atende o lote mínimo definido.`
 
+---
 
-Situação 7 (tipologia e un errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
-formato - Ok, na planilha
-volume - Ok, na planilha
-tipologia - False, não esta na planilha
-un - False, não esta na planilha
-polo - Ok, na planilha
-acabamento - Ok, na planilha
+### 🚫 Situação 3 — Volume Abaixo do Lote Mínimo  
+O volume informado é inferior ao exigido.
 
-R: Bloqueado, Tipologia (...) e unidade de medida (...) informado, não temos dentro do polo (...) e Formato(...).
+**Resultado:** `Bloqueado, volume inferior ao lote mínimo de 4000 m².`
 
+---
 
-Situação 8 (polo e un errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
-formato - Ok, na planilha
-volume - Ok, na planilha
-tipologia - Ok, na planilha
-un - False, não esta na planilha
-polo - False, não esta na planilha
-acabamento - Ok, na planilha
+### 🚫 Situação 4 — Tipologia Inválida  
+Tipologia não presente na planilha. Volume desconsiderado.
 
-R: Bloqueado, Polo (...) e unidade de medida (...) informado, não esta prensente no conjunto Formato (...) e Tipologia(...).
+**Resultado:** `Bloqueado, tipologia não está presente para o formato/unidade/polo informado.`
 
+---
 
-Situação 9 (polo e tipologia errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
-formato - Ok, na planilha
-volume - Ok, na planilha
-tipologia - False, não esta na planilha
-un - Ok, na planilha
-polo - False, não esta na planilha
-acabamento - Ok, na planilha
+🧩 O sistema cobre **diversas combinações possíveis** (Unidade de Medida, polo, acabamento, tipologia, Formato e Volume), bloqueando automaticamente casos inconsistentes.
+(Ao todo foi mapeado 16 situações diferentes envolvendo esses 6 campos. Onde o sistema esta considerando para aceitar solicitações validadas).
 
-R: Bloqueado, Polo (...) e tipologia (...) informado, não esta prensente no conjunto Formato (...) e Unidade de Medida (...).
+---
 
+## 📂 Estrutura Simplificada do Projeto
 
-Situação 10 (acabamento e tipologia errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
-formato - Ok, na planilha
-volume - Ok, na planilha
-tipologia - False, não esta na planilha
-un - Ok, na planilha
-polo - False, não esta na planilha
-acabamento - Ok, na planilha
+```bash
+/public
+  ├── uploads/
+  ├── proposta_cadastro.php
+  ├── proposta_detalhes.php
+  ├── proposta_consulta.php
+  ├── proposta_aprovacao.php 
+  ├── proposta_lote.php 
+  ├── upload_lote.php 
+  └── login.php
 
+/src
+  ├── config/
+  │    └── conexao.php
+  ├── controllers/
+  │    ├── aprovar_proposta.php
+  │    ├── rejeitar_proposta.php
+  │    └── comentario_proposta.php
+  └── functions/
+       └── verificar_lote_db.php
+```
 
-Situação 11 (acabamento e un errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
-formato - Ok, na planilha
-volume - Ok, na planilha
-tipologia - False, não esta na planilha
-un - Ok, na planilha
-polo - False, não esta na planilha
-acabamento - Ok, na planilha
+🧱 Próximos Passos
 
-Situação 12 (acabamento e polo errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
-formato - Ok, na planilha
-volume - Ok, na planilha
-tipologia - False, não esta na planilha
-un - Ok, na planilha
-polo - False, não esta na planilha
-acabamento - Ok, na planilha
+🔹 Implementar popup de validação rápida (consulta simplificada)
 
-Situação 13 (tipologia, un, acabamento errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
-formato - Ok, na planilha
-volume - Ok, na planilha
-tipologia - False, não esta na planilha
-un - Ok, na planilha
-polo - False, não esta na planilha
-acabamento - Ok, na planilha
+🔹 Melhorar feedback visual das validações
 
-Situação 14 (tipologia, un e polo errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
-formato - Ok, na planilha
-volume - Ok, na planilha
-tipologia - False, não esta na planilha
-un - Ok, na planilha
-polo - False, não esta na planilha
-acabamento - Ok, na planilha
+🔹 Criar logs de verificação para auditoria
 
-Situação 15 (tipologia, acabamento e polo errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
-formato - Ok, na planilha
-volume - Ok, na planilha
-tipologia - False, não esta na planilha
-un - Ok, na planilha
-polo - False, não esta na planilha
-acabamento - Ok, na planilha
+🔹 Criar endpoint de API para integração futura
 
-Situação 16 (un, acabamento e polo errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
-formato - Ok, na planilha
-volume - Ok, na planilha
-tipologia - False, não esta na planilha
-un - Ok, na planilha
-polo - False, não esta na planilha
-acabamento - Ok, na planilha
+---
+
+👨‍💻 Autor
+
+Ruan Bertan
+Desenvolvedor e idealizador do sistema de Validação de Lote Mínimo
+📍 Projeto interno da Eliane Revestimentos (uso corporativo)
+
+---
