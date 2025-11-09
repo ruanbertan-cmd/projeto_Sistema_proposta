@@ -7,7 +7,7 @@ ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
 include(__DIR__ . '/../src/config/conexao.php');
-include(__DIR__ . '/../src/functions/verificar_lote_func.php');
+include(__DIR__ . '/../src/functions/verificar_lote_db.php');
 
 $mensagem = ''; // mensagem do popup
 
@@ -32,7 +32,7 @@ if (isset($_POST['botaoEnviar'])) {
         $observacao = mb_strtoupper(trim($_POST['observacao'] ?? ''), 'UTF-8');
 
         // --- Verifica lote mínimo antes de subir imagem ---
-        $loteCheck = verificarLoteMinimoCSV($polo, $tipologia, $formato, $volume, $unidade_medida);
+        $loteCheck = verificarLoteMinimoDB($conexao, $polo, $tipologia, $formato, $volume, $unidade_medida);
         if (!$loteCheck['status']) {
             $mensagem = $loteCheck['mensagem'];
         } else {
