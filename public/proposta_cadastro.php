@@ -19,6 +19,7 @@ if (isset($_POST['botaoEnviar'])) {
         $polo = mb_strtoupper(trim($_POST['polo'] ?? ''), 'UTF-8');
         $formato = mb_strtoupper(trim($_POST['formato'] ?? ''), 'UTF-8');
         $tipologia = mb_strtoupper(trim($_POST['tipologia'] ?? ''), 'UTF-8');
+        $acabamento = mb_strtoupper(trim($_POST['acabamento'] ?? ''), 'UTF-8');
         $borda = mb_strtoupper(trim($_POST['borda'] ?? ''), 'UTF-8');
         $cor = mb_strtoupper(trim($_POST['cor'] ?? ''), 'UTF-8');
         $local_uso = mb_strtoupper(trim($_POST['local_uso'] ?? ''), 'UTF-8');
@@ -51,10 +52,10 @@ if (isset($_POST['botaoEnviar'])) {
 
             // --- Inserção no banco ---
             $sql = "INSERT INTO formulario (
-                volume, unidade_medida, polo, formato, tipologia, borda, cor, local_uso,
+                volume, unidade_medida, polo, formato, tipologia, acabamento, borda, cor, local_uso,
                 data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, imagem, observacao, usuario_id
             ) VALUES (
-                :volume, :unidade_medida, :polo, :formato, :tipologia, :borda, :cor, :local_uso,
+                :volume, :unidade_medida, :polo, :formato, :tipologia, :acabamento, :borda, :cor, :local_uso,
                 :data_previsao, :preco, :cliente, :obra, :nome_produto, :marca, :embalagem, :imagem, :observacao, :usuario_id
             )";
 
@@ -66,6 +67,7 @@ if (isset($_POST['botaoEnviar'])) {
                 ':polo' => $polo,
                 ':formato' => $formato,
                 ':tipologia' => $tipologia,
+                ':acabamento' => $acabamento,
                 ':borda' => $borda,
                 ':cor' => $cor,
                 ':local_uso' => $local_uso,
@@ -343,6 +345,24 @@ if (isset($_POST['botaoEnviar'])) {
                     <option value="PORC GL">Porc GL</option>
                     <option value="PORC UGL">Porc UGL</option>
                     <option value="AZULEJO">Azulejo</option>
+                    <option value="MONOQUEIMA">Monoqueima</option>
+                </select>
+            </div>
+
+            <div class="entrada_formulario">
+                <label for="acabamento">Acabamento</label>
+                <select name="acabamento" required>
+                    <option value="">Selecione...</option>
+                    <option value="ACETINADO">Acetinado</option>
+                    <option value="POLIDO">Polido</option>
+                    <option value="BRILHANTE">Brilhante</option>
+                    <option value="NATURAL">Natural</option>
+                    <option value="MATE">Mate</option>
+                    <option value="RESISTENTE AO ESCORREGAMENTO">Resistente ao Escorregamento</option>
+                    <option value="METALIZADO">Metalizado</option>
+                    <option value="FLAMEADO">Flameado</option>
+                    <option value="RESISTENTE AOS ACIDOS">Resistente aos Acidos</option>
+                    <option value="DUO">Duo</option>
                 </select>
             </div>
 

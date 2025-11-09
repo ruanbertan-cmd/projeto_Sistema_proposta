@@ -21,7 +21,7 @@ if ($id <= 0) {
 
 // === Busca dados da proposta ===
 $stmt = $conexao->prepare("
-    SELECT id, volume, unidade_medida, polo, formato, tipologia, borda, cor, local_uso, 
+    SELECT id, volume, unidade_medida, polo, formato, tipologia, acabamento, borda, cor, local_uso, 
            data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, observacao, 
            imagem, status
     FROM formulario 
