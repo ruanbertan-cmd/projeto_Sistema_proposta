@@ -302,7 +302,7 @@ if (isset($_POST['botaoEnviar'])) {
     <main class="main_proposta_cadastro">
         <form action="proposta_cadastro.php" method="POST" enctype="multipart/form-data">
             <h1>Dados para Personalização de Produto</h1>
-
+                       
             <!-- Campos do formulário -->
             <div class="entrada_formulario">
                 <label for="volume">Volume</label>

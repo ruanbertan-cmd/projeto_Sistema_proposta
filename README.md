@@ -1,0 +1,172 @@
+Campos sendo analisados:
+formato
+volume
+tipologia
+un
+
+Situação 1 (Excessão de formato, mesmo de alguma outra informação não estiver na planilha, considerar do mesmo jeito, por poder ser cortes...):
+formato - False, não esta na planilha
+volume - Ok, de acordo
+tipologia - Ok, na planilha
+un - Ok, na planilha
+polo - Ok, na planilha
+acabamento - Ok, na planilha
+
+R: Ok, proposta cadastrada considerando como formato de corte!
+
+
+Situação 2 (Ok, tudo dentro da planilha):
+formato - Ok, na planilha
+volume - Ok, de acordo
+tipologia - Ok, na planilha
+un - Ok, na planilha
+polo - Ok, na planilha
+acabamento - Ok, na planilha
+
+R: Ok, volume atende o lote minimo de tal...
+
+
+Situação 3 (volume baixo):
+formato - Ok, na planilha
+volume - False, não esta na planilha
+tipologia - Ok, na planilha
+un - Ok, na planilha
+polo - Ok, na planilha
+acabamento - Ok, na planilha
+
+R: Bloqueado, volume inferior ao lote minimo de 4000 m2, etc...
+
+
+
+Situação 3 (Tipologia errada, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
+formato - Ok, na planilha
+volume - Ok, na planilha
+tipologia - False, não esta na planilha
+un - Ok, na planilha
+polo - Ok, na planilha
+acabamento - Ok, na planilha
+
+R: Bloqueado, tipologia não esta presente para o Formato (...) un (...) no polo (...).
+
+
+Situação 4 (un errada, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
+formato - Ok, na planilha
+volume - Ok, na planilha
+tipologia - Ok, na planilha
+un - False, não esta na planilha
+polo - Ok, na planilha
+acabamento - Ok, na planilha
+
+R: Bloqueado, não temos a unidade de medida (...) ao conjunto de Formato (...) Tipologia (...) no polo (...).
+
+
+Situação 5 (polo errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
+formato - Ok, na planilha
+volume - Ok, na planilha
+tipologia - Ok, na planilha
+un - Ok, na planilha
+polo - False, não esta na planilha
+acabamento - Ok, na planilha
+
+R: Bloqueado, no polo (...) informado, não temos o conjunto de Tipologia (...), Formato (...) un (...) no polo (...).
+
+Situação 6 (acabamento errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
+formato - Ok, na planilha
+volume - Ok, na planilha
+tipologia - Ok, na planilha
+un - Ok, na planilha
+polo - Ok, na planilha
+acabamento - False, não esta na planilha
+
+R: Bloqueado, o acabamento (...) informado, não temos combinação com as demais informações de Tipologia (...), Formato (...) un (...) no polo (...).
+
+
+Situação 7 (tipologia e un errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
+formato - Ok, na planilha
+volume - Ok, na planilha
+tipologia - False, não esta na planilha
+un - False, não esta na planilha
+polo - Ok, na planilha
+acabamento - Ok, na planilha
+
+R: Bloqueado, Tipologia (...) e unidade de medida (...) informado, não temos dentro do polo (...) e Formato(...).
+
+
+Situação 8 (polo e un errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
+formato - Ok, na planilha
+volume - Ok, na planilha
+tipologia - Ok, na planilha
+un - False, não esta na planilha
+polo - False, não esta na planilha
+acabamento - Ok, na planilha
+
+R: Bloqueado, Polo (...) e unidade de medida (...) informado, não esta prensente no conjunto Formato (...) e Tipologia(...).
+
+
+Situação 9 (polo e tipologia errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
+formato - Ok, na planilha
+volume - Ok, na planilha
+tipologia - False, não esta na planilha
+un - Ok, na planilha
+polo - False, não esta na planilha
+acabamento - Ok, na planilha
+
+R: Bloqueado, Polo (...) e tipologia (...) informado, não esta prensente no conjunto Formato (...) e Unidade de Medida (...).
+
+
+Situação 10 (acabamento e tipologia errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
+formato - Ok, na planilha
+volume - Ok, na planilha
+tipologia - False, não esta na planilha
+un - Ok, na planilha
+polo - False, não esta na planilha
+acabamento - Ok, na planilha
+
+
+Situação 11 (acabamento e un errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
+formato - Ok, na planilha
+volume - Ok, na planilha
+tipologia - False, não esta na planilha
+un - Ok, na planilha
+polo - False, não esta na planilha
+acabamento - Ok, na planilha
+
+Situação 12 (acabamento e polo errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
+formato - Ok, na planilha
+volume - Ok, na planilha
+tipologia - False, não esta na planilha
+un - Ok, na planilha
+polo - False, não esta na planilha
+acabamento - Ok, na planilha
+
+Situação 13 (tipologia, un, acabamento errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
+formato - Ok, na planilha
+volume - Ok, na planilha
+tipologia - False, não esta na planilha
+un - Ok, na planilha
+polo - False, não esta na planilha
+acabamento - Ok, na planilha
+
+Situação 14 (tipologia, un e polo errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
+formato - Ok, na planilha
+volume - Ok, na planilha
+tipologia - False, não esta na planilha
+un - Ok, na planilha
+polo - False, não esta na planilha
+acabamento - Ok, na planilha
+
+Situação 15 (tipologia, acabamento e polo errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
+formato - Ok, na planilha
+volume - Ok, na planilha
+tipologia - False, não esta na planilha
+un - Ok, na planilha
+polo - False, não esta na planilha
+acabamento - Ok, na planilha
+
+Situação 16 (un, acabamento e polo errado, nesse caso desconsiderar o campo de volume, pois não tem como avaliar):
+formato - Ok, na planilha
+volume - Ok, na planilha
+tipologia - False, não esta na planilha
+un - Ok, na planilha
+polo - False, não esta na planilha
+acabamento - Ok, na planilha
