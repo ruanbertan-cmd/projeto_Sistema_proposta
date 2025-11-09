@@ -213,7 +213,7 @@ button:active {
         <h1>Lista de Lote Mínimo Sendo Considerada</h1>
 
         <form action="upload_lote.php" method="POST" enctype="multipart/form-data">
-            <input type="file" name='arquivo' accept=".csv" required>
+            <input type="file" name='arquivo' id='arquivo' accept=".csv" required>
             <button type="submit">Enviar Arquivo</button>
         </form>
 
@@ -267,6 +267,12 @@ Swal.fire({
     text: '<?= isset($_GET['count']) ? htmlspecialchars($_GET['count']) . ' registros inseridos.' : '' ?>',
     showConfirmButton: false,
     timer: 3000
+}).then(() => {
+    // Remove os parâmetros da URL sem recarregar a página
+    if (window.history.replaceState) {
+        const url = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.history.replaceState({}, document.title, url);
+    }
 });
 </script>
 <?php endif; ?>
