@@ -9,6 +9,7 @@ function verificarLoteMinimoDB($conexao, $polo, $tipologia, $formato, $acabament
     $un = mb_strtoupper(trim($un));
     $volume = floatval($volume);
 
+    // Ajustes específicos para acabamento (Divisão de AC e PO)
     $acabamentoAjustado = match ($acabamento) {
         'POLIDO' => 'PO',
         'ACETINADO', 'BRILHANTE', 'NATURAL', 'MATE', 'RESISTENTE AO ESCORREGAMENTO', 'METALIZADO', 'FLAMEADO', 'RESISTENTE AOS ACIDOS', 'DUO' => 'AC',
