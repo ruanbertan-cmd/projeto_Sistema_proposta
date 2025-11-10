@@ -2,11 +2,11 @@
 session_start();
 include(__DIR__ . '/../src/config/conexao.php');
 
-// 🕒 Corrige definitivamente o fuso horário
+// Corrige definitivamente o fuso horário
 date_default_timezone_set('America/Sao_Paulo');
 $conexao->exec("SET time_zone = '-03:00'");
 
-// 🔒 Garantir que o usuário está logado
+// Garantir que o usuário está logado
 $usuario_id = $_SESSION['usuario_id'] ?? null;
 if (!$usuario_id) {
     header('Location: login.php');

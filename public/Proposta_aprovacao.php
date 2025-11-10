@@ -2,7 +2,7 @@
 session_start();
 include(__DIR__ . '/../src/config/conexao.php');
 
-// 🕒 Corrige definitivamente o fuso horário
+// Corrige definitivamente o fuso horário
 date_default_timezone_set('America/Sao_Paulo');
 $conexao->exec("SET time_zone = '-03:00'");
 
