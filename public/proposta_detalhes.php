@@ -410,6 +410,7 @@ $stmtLidos->execute([$usuario_id, $usuario_id, $formulario_id, $usuario_id]);
 <tr><th>Formato</th><td><?= htmlspecialchars($row['formato']); ?></td></tr>
 <tr><th>Polo</th><td><?= htmlspecialchars($row['polo']); ?></td></tr>
 <tr><th>Tipologia</th><td><?= htmlspecialchars($row['tipologia']); ?></td></tr>
+<tr><th>Acabamento</th><td><?= htmlspecialchars($row['acabamento']); ?></td></tr>
 <tr><th>Borda</th><td><?= htmlspecialchars($row['borda']); ?></td></tr>
 <tr><th>Cor</th><td><?= htmlspecialchars($row['cor']); ?></td></tr>
 <tr><th>Local de Uso</th><td><?= htmlspecialchars($row['local_uso']); ?></td></tr>

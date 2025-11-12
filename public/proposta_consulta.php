@@ -188,7 +188,7 @@ $propostas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 ?>
                 <tr>
                     <td><?= htmlspecialchars($p['nome_produto']) ?></td>
-                    <td><?= !empty($p['data_previsao']) ? date('d/m/Y H:i', strtotime($p['data_previsao'])) : '-' ?></td>
+                    <td><?= !empty($p['data_previsao']) ? date('d/m/Y', strtotime($p['data_previsao'])) : '-' ?></td>
                     <td class="<?= $statusClass ?>"><?= htmlspecialchars($status ?: 'Em análise') ?></td>
                     <td>
                         <a href="proposta_detalhes.php?id=<?= $p['id'] ?>&origem=consulta" class="detalhes">

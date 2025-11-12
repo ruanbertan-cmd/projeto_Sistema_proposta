@@ -22,6 +22,7 @@ $stmt = $conexao->prepare("
         f.unidade_medida,
         f.formato,
         f.tipologia,
+        f.acabamento,
         f.borda,
         f.local_uso,
         f.data_previsao,
@@ -193,6 +194,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <th>Volume</th>
                 <th>Formato</th>
                 <th>Tipologia</th>
+                <th>Acabamento</th>
                 <th>Borda</th>
                 <th>Local de Uso</th>
                 <th>Data Previsão</th>
@@ -207,6 +209,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td><?= htmlspecialchars($row['volume'] . ' ' . $row['unidade_medida']) ?></td>
                     <td><?= htmlspecialchars($row['formato']) ?></td>
                     <td><?= htmlspecialchars($row['tipologia']) ?></td>
+                    <td><?= htmlspecialchars($row['acabamento']) ?></td>
                     <td><?= htmlspecialchars($row['borda']) ?></td>
                     <td><?= htmlspecialchars($row['local_uso']) ?></td>
                     <td><?= htmlspecialchars(date('d/m/Y', strtotime($row['data_previsao']))) ?></td>
