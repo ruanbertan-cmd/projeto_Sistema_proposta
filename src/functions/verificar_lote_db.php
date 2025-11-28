@@ -17,13 +17,13 @@ function verificarLoteMinimoDB($conexao, $polo, $tipologia, $formato, $acabament
     };
 
     // 1️⃣ Busca por formato (para exceção de corte)
-    $stmtFormato = $conexao->prepare("SELECT * FROM lote_minimo WHERE formato = ?");
+    $stmtFormato = $conexao->prepare("SELECT * FROM pr_lote_minimo WHERE formato = ?");
     $stmtFormato->execute([$formato]);
     $dadosFormato = $stmtFormato->fetch(PDO::FETCH_ASSOC);
 
     // 2️⃣ Busca pelo conjunto polo + tipologia + un + acabamento
     $stmtConjunto = $conexao->prepare("
-        SELECT * FROM lote_minimo
+        SELECT * FROM pr_lote_minimo
         WHERE polo = ? AND tipologia = ? AND un = ? AND acabamento = ?
     ");
     $stmtConjunto->execute([$polo, $tipologia, $un, $acabamentoAjustado]);
@@ -31,7 +31,7 @@ function verificarLoteMinimoDB($conexao, $polo, $tipologia, $formato, $acabament
 
     // 3️⃣ Busca completa (todos os campos)
     $stmtCompleto = $conexao->prepare("
-        SELECT * FROM lote_minimo
+        SELECT * FROM pr_lote_minimo
         WHERE polo = ? AND tipologia = ? AND formato = ? AND acabamento = ? AND un = ?
     ");
     $stmtCompleto->execute([$polo, $tipologia, $formato, $acabamentoAjustado, $un]);
@@ -64,7 +64,7 @@ function verificarLoteMinimoDB($conexao, $polo, $tipologia, $formato, $acabament
 
     // Situação 4 - Tipologia errada
     $stmtTipologia = $conexao->prepare("
-        SELECT * FROM lote_minimo WHERE formato = ? AND un = ? AND polo = ? AND acabamento = ?
+        SELECT * FROM pr_lote_minimo WHERE formato = ? AND un = ? AND polo = ? AND acabamento = ?
     ");
     $stmtTipologia->execute([$formato, $un, $polo, $acabamentoAjustado]);
     if (!$stmtTipologia->fetch(PDO::FETCH_ASSOC)) {
@@ -76,7 +76,7 @@ function verificarLoteMinimoDB($conexao, $polo, $tipologia, $formato, $acabament
 
     // Situação 5 - Unidade errada
     $stmtUn = $conexao->prepare("
-        SELECT * FROM lote_minimo WHERE formato = ? AND tipologia = ? AND polo = ? AND acabamento = ?
+        SELECT * FROM pr_lote_minimo WHERE formato = ? AND tipologia = ? AND polo = ? AND acabamento = ?
     ");
     $stmtUn->execute([$formato, $tipologia, $polo, $acabamentoAjustado]);
     if (!$stmtUn->fetch(PDO::FETCH_ASSOC)) {
@@ -88,7 +88,7 @@ function verificarLoteMinimoDB($conexao, $polo, $tipologia, $formato, $acabament
 
     // Situação 6 - Acabamento errado
     $stmtAcab = $conexao->prepare("
-        SELECT * FROM lote_minimo WHERE formato = ? AND tipologia = ? AND polo = ? AND un = ?
+        SELECT * FROM pr_lote_minimo WHERE formato = ? AND tipologia = ? AND polo = ? AND un = ?
     ");
     $stmtAcab->execute([$formato, $tipologia, $polo, $un]);
     if (!$stmtAcab->fetch(PDO::FETCH_ASSOC)) {
@@ -100,7 +100,7 @@ function verificarLoteMinimoDB($conexao, $polo, $tipologia, $formato, $acabament
 
     // Situação 7 - Tipologia e Unidade erradas
     $stmtTipUn = $conexao->prepare("
-        SELECT * FROM lote_minimo WHERE formato = ? AND polo = ? AND acabamento = ?
+        SELECT * FROM pr_lote_minimo WHERE formato = ? AND polo = ? AND acabamento = ?
     ");
     $stmtTipUn->execute([$formato, $polo, $acabamentoAjustado]);
     if (!$stmtTipUn->fetch(PDO::FETCH_ASSOC)) {
@@ -112,7 +112,7 @@ function verificarLoteMinimoDB($conexao, $polo, $tipologia, $formato, $acabament
 
     // Situação 8 - Polo e Unidade erradas
     $stmtPoloUn = $conexao->prepare("
-        SELECT * FROM lote_minimo WHERE formato = ? AND tipologia = ? AND acabamento = ?
+        SELECT * FROM pr_lote_minimo WHERE formato = ? AND tipologia = ? AND acabamento = ?
     ");
     $stmtPoloUn->execute([$formato, $tipologia, $acabamentoAjustado]);
     if (!$stmtPoloUn->fetch(PDO::FETCH_ASSOC)) {
@@ -124,7 +124,7 @@ function verificarLoteMinimoDB($conexao, $polo, $tipologia, $formato, $acabament
 
     // Situação 9 - Polo e Tipologia errados
     $stmtPoloTip = $conexao->prepare("
-        SELECT * FROM lote_minimo WHERE formato = ? AND un = ? AND acabamento = ?
+        SELECT * FROM pr_lote_minimo WHERE formato = ? AND un = ? AND acabamento = ?
     ");
     $stmtPoloTip->execute([$formato, $un, $acabamentoAjustado]);
     if (!$stmtPoloTip->fetch(PDO::FETCH_ASSOC)) {

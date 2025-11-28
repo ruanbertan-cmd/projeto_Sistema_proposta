@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $senha = trim($_POST['password']);
 
     try {
-        $stmt = $conexao->prepare("SELECT id, usuario, senha FROM usuario WHERE usuario = :usuario");
+        $stmt = $conexao->prepare("SELECT id, usuario, senha FROM pr_usuario WHERE usuario = :usuario");
         $stmt->bindParam(':usuario', $usuario);
         $stmt->execute();
 
@@ -25,7 +25,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
     } catch(PDOException $e) {
-        die("Erro no login: " . $e->getMessage());
+        // Log de erro para análise
+        error_log("Erro no login: " . $e->getMessage());
+        // Mensagem genérica para o usuário
+        $_SESSION['flash_error'] = 'Erro ao realizar o login. Tente novamente ou entre em contato com o administrador.';
+        // Redireciona de volta para o cadastro
+        header('Location: login.php');
+        exit;
     }
 }
 ?>

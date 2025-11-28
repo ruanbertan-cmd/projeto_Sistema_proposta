@@ -17,8 +17,16 @@
         // Opcional: ativa o modo de fetch associativo por padrão
         $conexao->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
-        // echo "Conectado com sucesso!";
     } catch (PDOException $e) {
-        die("Erro de conexão: " . $e->getMessage());
+
+        // Log de erro para análise
+        error_log("Erro de conexão: " . $e->getMessage());
+
+        // Mensagem genérica para o usuário
+        $_SESSION['flash_error'] = 'Erro ao conectar ao banco de dados. Tente novamente mais tarde ou entre em contato com o administrador.';
+
+        // Redireciona de volta para a página inicial segura de login
+        header('Location: login.php');
+        exit;
     }
 ?>

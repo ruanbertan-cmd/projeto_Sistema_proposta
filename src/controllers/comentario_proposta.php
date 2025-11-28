@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!empty($comentario)) {
         $stmt = $conexao->prepare("
-            UPDATE formulario 
+            UPDATE pr_formulario 
             SET comentario_Lib_Produto = :comentario 
             WHERE id = :id
         ");

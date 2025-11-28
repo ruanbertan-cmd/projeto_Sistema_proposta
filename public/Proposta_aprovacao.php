@@ -31,8 +31,8 @@ $stmt = $conexao->prepare("
         f.status,
         EXISTS (
             SELECT 1
-            FROM comentarios c
-            LEFT JOIN comentarios_visualizacao cv
+            FROM pr_comentarios c
+            LEFT JOIN pr_comentarios_visualizacao cv
                 ON cv.comentario_id = c.id AND cv.usuario_id = ?
             WHERE c.formulario_id = f.id
               AND cv.id IS NULL

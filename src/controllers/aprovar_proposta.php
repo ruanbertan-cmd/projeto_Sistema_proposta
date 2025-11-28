@@ -24,7 +24,7 @@ if (!$id) {
 try {
     // Atualiza o status no banco
     $stmt = $conexao->prepare("
-        UPDATE formulario
+        UPDATE pr_formulario
         SET status = CONCAT('Aprovado ', DATE_FORMAT(NOW(), '%d/%m/%Y'))
         WHERE id = ?
     ");
@@ -32,7 +32,11 @@ try {
 
     $_SESSION['flash_success'] = 'Proposta aprovada com sucesso.';
 } catch (PDOException $e) {
+
+    // Log de erro para análise
     error_log('Erro ao aprovar proposta (ID ' . $id . '): ' . $e->getMessage());
+
+    // Mensagem genérica para o usuário
     $_SESSION['flash_error'] = 'Erro ao aprovar a proposta. Tente novamente.';
 }
 

@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         // Verifica se o usuário já existe
-        $stmt = $conexao->prepare("SELECT COUNT(*) AS total FROM usuario WHERE usuario = :usuario");
+        $stmt = $conexao->prepare("SELECT COUNT(*) AS total FROM pr_usuario WHERE usuario = :usuario");
         $stmt->bindParam(':usuario', $username);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
 
         // Insere no banco
-        $stmt = $conexao->prepare("INSERT INTO usuario (usuario, senha, data) VALUES (:usuario, :senha, NOW())");
+        $stmt = $conexao->prepare("INSERT INTO pr_usuario (usuario, senha, data) VALUES (:usuario, :senha, NOW())");
         $stmt->bindParam(':usuario', $username);
         $stmt->bindParam(':senha', $senha_hash);
         $stmt->execute();
@@ -33,8 +33,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
 
     } catch(PDOException $e) {
-        die("Erro no cadastro: " . $e->getMessage());
+        // Log de erro para análise
+        error_log("Erro no cadastro: " . $e->getMessage());
+        // Mensagem genérica para o usuário
+        $_SESSION['flash_error'] = 'Erro ao realizar o cadastro. Tente novamente ou entre em contato com o administrador.';
+        // Redireciona de volta para o cadastro
+        header('Location: cadastro.php');
+        exit;
     }
+
 }
 ?>
 

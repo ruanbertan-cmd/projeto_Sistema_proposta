@@ -11,7 +11,7 @@ if (!isset($_SESSION['usuario_id'])) {
     exit;
 }
 
-$stmt = $conexao->query("SELECT * FROM lote_minimo ORDER BY id ASC");
+$stmt = $conexao->query("SELECT * FROM pr_lote_minimo ORDER BY id ASC");
 $lotes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 

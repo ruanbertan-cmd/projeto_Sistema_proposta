@@ -1,6 +1,11 @@
 <?php
 session_start();
 
+// Verifica se o usuário já está logado
+if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario']['login_usuario'])):
+    header('Location: proposta_cadastro.php');
+    exit;
+
 include(__DIR__ . '/../src/config/conexao.php');
 include(__DIR__ . '/../src/functions/verificar_lote_db.php');
 
@@ -46,7 +51,7 @@ if (isset($_POST['botaoEnviar'])) {
             }
 
             // --- Inserção no banco ---
-            $sql = "INSERT INTO formulario (
+            $sql = "INSERT INTO pr_formulario (
                 volume, unidade_medida, polo, formato, tipologia, acabamento, borda, cor, local_uso,
                 data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, imagem, observacao, usuario_id
             ) VALUES (
@@ -81,7 +86,13 @@ if (isset($_POST['botaoEnviar'])) {
             $mensagem = 'Proposta enviada com sucesso!';
         }
     } catch (PDOException $e) {
-        $mensagem = 'Erro ao enviar proposta: ' . addslashes($e->getMessage());
+        // Log de erro para análise
+        error_log('erro ao enviar proposta: ' . $e->getMessage());
+        // Mensagem genérica para o usuário
+        $mensagem = 'Erro ao enviar proposta. Contate o administrador.';
+        // Redireciona de volta para o cadastro
+        header('Location: proposta_cadastro.php');
+        exit;
     }
 }
 ?>
@@ -470,3 +481,13 @@ if (isset($_POST['botaoEnviar'])) {
     <?php endif; ?>
 </body>
 </html>
+<?php
+// Se não estiver logado, redireciona para a página de validação
+else:
+    $link = 'http://localhost:8080/proposta_cadastro.php';
+    $link = base64_encode($link);
+    #header('Location: https://ww1.eliane.com/valida/?link=' . $link);
+    header('Location: https://ww1.eliane.com/valida/?link=' . $link);
+    exit;
+endif;
+?>

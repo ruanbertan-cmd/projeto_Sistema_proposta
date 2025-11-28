@@ -24,7 +24,7 @@ $stmt = $conexao->prepare("
     SELECT id, volume, unidade_medida, polo, formato, tipologia, acabamento, borda, cor, local_uso, 
            data_previsao, preco, cliente, obra, nome_produto, marca, embalagem, observacao, 
            imagem, status
-    FROM formulario 
+    FROM pr_formulario 
     WHERE id = ?
 ");
 $stmt->execute([$id]);
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comentario_novo'])) {
 
     if ($comentario !== '') {
         $stmtInsert = $conexao->prepare("
-            INSERT INTO comentarios (formulario_id, usuario_id, comentario, data_hora)
+            INSERT INTO pr_comentarios (formulario_id, usuario_id, comentario, data_hora)
             VALUES (?, ?, ?, NOW())
         ");
         $stmtInsert->execute([$formulario_id, $usuario_id, $comentario]);
@@ -54,10 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comentario_novo'])) {
 
 // === Marcar comentários visualizados ===
 $stmtMarcar = $conexao->prepare("
-    INSERT INTO comentarios_visualizacao (comentario_id, usuario_id)
+    INSERT INTO pr_comentarios_visualizacao (comentario_id, usuario_id)
     SELECT c.id, :usuario_id
-    FROM comentarios c
-    LEFT JOIN comentarios_visualizacao cv 
+    FROM pr_comentarios c
+    LEFT JOIN pr_comentarios_visualizacao cv 
         ON cv.comentario_id = c.id AND cv.usuario_id = :usuario_id
     WHERE c.formulario_id = :formulario_id
       AND cv.id IS NULL
@@ -78,9 +78,9 @@ $stmtComentarios = $conexao->prepare("
             WHEN cv.id IS NULL AND c.usuario_id != ? THEN 1
             ELSE 0
         END AS novo
-    FROM comentarios c
+    FROM pr_comentarios c
     LEFT JOIN usuario u ON u.id = c.usuario_id
-    LEFT JOIN comentarios_visualizacao cv 
+    LEFT JOIN pr_comentarios_visualizacao cv 
         ON cv.comentario_id = c.id AND cv.usuario_id = ?
     WHERE c.formulario_id = ?
     ORDER BY c.data_hora DESC
@@ -90,10 +90,10 @@ $comentarios = $stmtComentarios->fetchAll(PDO::FETCH_ASSOC);
 
 // === Marcar como lidos ===
 $stmtLidos = $conexao->prepare("
-    INSERT IGNORE INTO comentarios_visualizacao (comentario_id, usuario_id)
+    INSERT IGNORE INTO pr_comentarios_visualizacao (comentario_id, usuario_id)
     SELECT c.id, ?
-    FROM comentarios c
-    LEFT JOIN comentarios_visualizacao cv 
+    FROM pr_comentarios c
+    LEFT JOIN pr_comentarios_visualizacao cv 
         ON cv.comentario_id = c.id AND cv.usuario_id = ?
     WHERE c.formulario_id = ? 
       AND c.usuario_id != ? 

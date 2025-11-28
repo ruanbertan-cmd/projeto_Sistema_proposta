@@ -24,7 +24,7 @@ if (!$id) {
 try {
     // Atualiza o status no banco
     $stmt = $conexao->prepare("
-        UPDATE formulario
+        UPDATE pr_formulario
         SET status = CONCAT('Rejeitado ', DATE_FORMAT(NOW(), '%d/%m/%Y'))
         WHERE id = ?
     ");
@@ -32,7 +32,11 @@ try {
 
     $_SESSION['flash_success'] = 'Proposta rejeitada com sucesso.';
 } catch (PDOException $e) {
-    error_log('Erro ao rejeitar proposta (ID ' . $id . '): ' . $e->getMessage());
+
+    // Log de erro para análise
+    error_log('Erro ao rejeitar proposta (ID ' . $id . ').' . $e->getMessage());
+
+    // Mensagem genérica para o usuário
     $_SESSION['flash_error'] = 'Erro ao rejeitar a proposta. Tente novamente.';
 }
 

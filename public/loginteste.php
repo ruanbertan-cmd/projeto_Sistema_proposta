@@ -9,8 +9,9 @@ if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario']['login_usuario'])
 
 // Se não estiver logado, redireciona para a página de validação
 else:
-    $link = 'https://ww1.eliane.com/ruan/proposta_cadastro.php';
+    $link = 'http://ww1.eliane.com/proposta_cadastro.php';
     $link = base64_encode($link);
+    #header('Location: https://ww1.eliane.com/valida/?link=' . $link);
     header('Location: https://ww1.eliane.com/valida/?link=' . $link);
     exit;
 endif;

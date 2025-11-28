@@ -21,7 +21,7 @@ try {
     }
 
     // === Apaga registros antigos ===
-    $conexao->exec("DELETE FROM lote_minimo");
+    $conexao->exec("DELETE FROM pr_lote_minimo");
 
     // === Abre arquivo e detecta delimitador ===
     $handle = fopen($caminhoTemp, 'r');
@@ -39,7 +39,7 @@ try {
     }
 
     // === Prepara INSERT ===
-    $sql = "INSERT INTO lote_minimo 
+    $sql = "INSERT INTO pr_lote_minimo 
         (emp, uni, polo, uni_fabril, bitola, formato, tipologia, un, acabamento, descricao, situacao, Lote, lote_alternativo1, lote_alternativo2)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conexao->prepare($sql);
@@ -58,7 +58,7 @@ try {
 
     // === Salva histórico ===
     $stmtHist = $conexao->prepare("
-        INSERT INTO lote_minimo_historico (usuario_id, nome_arquivo, quantidade_registros, observacao)
+        INSERT INTO pr_lote_minimo_historico (usuario_id, nome_arquivo, quantidade_registros, observacao)
         VALUES (?, ?, ?, ?)
     ");
     $stmtHist->execute([
@@ -73,11 +73,14 @@ try {
 
 
 } catch (Exception $e) {
-    // 🐞 Modo debug — exibe o erro real
-    echo "<pre style='font-family: monospace; color: red;'>";
-    echo "❌ Erro ao processar arquivo:\n\n";
-    echo $e->getMessage() . "\n\n";
-    echo "Trace:\n" . $e->getTraceAsString();
-    echo "</pre>";
+    // Log de erro para análise
+    error_log("Erro ao processar arquivo de lote mínimo: " . $e->getMessage());
+    error_log("Trace: " . $e->getTraceAsString());
+
+    // Mensagem genérica para o usuário
+    $_SESSION['flash_error'] =  "Ocorreu um erro ao processar a operação. Por favor, tente novamente ou contate o administrador.";
+
+    // Redireciona de volta para a página de lote
+    header("Location: proposta_lote.php");
     exit;
 }
