@@ -2,6 +2,10 @@
 session_start();
 include(__DIR__ . '/../src/config/conexao.php');
 
+// Verifica se o usuário já está logado
+if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario']['login_usuario'])):
+    header('Location: proposta_cadastro.php');
+    exit;
 
 // Fuso horário e timezone do MySQL
 date_default_timezone_set('America/Sao_Paulo');
@@ -84,3 +88,13 @@ try {
     header("Location: proposta_lote.php");
     exit;
 }
+
+// Se não estiver logado, redireciona para a página de validação
+else:
+    $link = 'http://localhost:8080/proposta_cadastro.php';
+    $link = base64_encode($link);
+    #header('Location: https://ww1.eliane.com/valida/?link=' . $link);
+    header('Location: https://ww1.eliane.com/valida/?link=' . $link);
+    exit;
+endif;
+

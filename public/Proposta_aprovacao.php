@@ -6,11 +6,10 @@ include(__DIR__ . '/../src/config/conexao.php');
 date_default_timezone_set('America/Sao_Paulo');
 $conexao->exec("SET time_zone = '-03:00'");
 
-// Verifica login
-if (!isset($_SESSION['usuario_id'])) {
-    header('Location: login.php');
+// Verifica se o usuário já está logado
+if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario']['login_usuario'])):
+    header('Location: proposta_cadastro.php');
     exit;
-}
 
 $usuario_id = $_SESSION['usuario_id'];
 
@@ -275,3 +274,13 @@ function confirmAction(action, id) {
 
 </body>
 </html>
+<?php
+// Se não estiver logado, redireciona para a página de validação
+else:
+    $link = 'http://localhost:8080/proposta_cadastro.php';
+    $link = base64_encode($link);
+    #header('Location: https://ww1.eliane.com/valida/?link=' . $link);
+    header('Location: https://ww1.eliane.com/valida/?link=' . $link);
+    exit;
+endif;
+?>
