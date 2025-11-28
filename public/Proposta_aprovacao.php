@@ -38,7 +38,7 @@ $stmt = $conexao->prepare("
               AND cv.id IS NULL
               AND c.usuario_id != ?
         ) AS novo_comentario
-    FROM formulario f
+    FROM pr_formulario f
     ORDER BY f.id DESC
 ");
 $stmt->execute([$usuario_id, $usuario_id]);

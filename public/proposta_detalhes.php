@@ -79,7 +79,7 @@ $stmtComentarios = $conexao->prepare("
             ELSE 0
         END AS novo
     FROM pr_comentarios c
-    LEFT JOIN usuario u ON u.id = c.usuario_id
+    LEFT JOIN pr_usuario u ON u.id = c.usuario_id
     LEFT JOIN pr_comentarios_visualizacao cv 
         ON cv.comentario_id = c.id AND cv.usuario_id = ?
     WHERE c.formulario_id = ?
@@ -472,7 +472,7 @@ elseif(str_starts_with($status,'Rejeitado')) $color = 'red';
 <?php
 $origem = $_GET['origem'] ?? null;
 $voltar_para = $origem
-    ? ($origem === 'aprovacao' ? 'proposta_aprovacao.php' : 'proposta_consulta.php')
+    ? ($origem === 'fases' ? 'proposta_aprovacao.php' : 'proposta_consulta.php')
     : ($_SERVER['HTTP_REFERER'] ?? 'proposta_consulta.php');
 ?>
 <a href="<?= htmlspecialchars($voltar_para) ?>" class="voltar">Voltar</a>
